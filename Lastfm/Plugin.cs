@@ -6,7 +6,10 @@
     using MediaBrowser.Model.Logging;
     using MediaBrowser.Model.Plugins;
     using MediaBrowser.Model.Serialization;
+    using System;
     using System.Threading;
+    using System.Linq;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Class Plugin
@@ -32,6 +35,24 @@
             : base(applicationPaths, xmlSerializer)
         {
             Instance = this;
+        }
+
+        public IEnumerable<PluginPageInfo> GetPages()
+        {
+            return new[]
+            {
+                new PluginPageInfo
+                {
+                    Name = "lastfm",
+                    EmbeddedResourcePath = GetType().Namespace + ".Configuration.configPage.html"
+                }
+            };
+        }
+
+        private Guid _id = new Guid("E603A45D-7088-4EE0-892D-B7CA8BC0B513");
+        public override Guid Id
+        {
+            get { return _id; }
         }
 
         /// <summary>

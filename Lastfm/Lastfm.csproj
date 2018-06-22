@@ -7,6 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Configuration\configPage.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\configPage.html" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="mediabrowser.server.core" Version="3.3.51-beta" />
   </ItemGroup>
 

@@ -40,14 +40,19 @@
             get { return "Last.fm"; }
         }
 
+        public string Key
+        {
+            get { return "ImportLastfmData"; }
+        }
+
         public string Description
         {
             get { return "Import play counts and favourite tracks for each user with Last.fm accounted configured"; }
         }
 
-        public IEnumerable<ITaskTrigger> GetDefaultTriggers()
+        public IEnumerable<TaskTriggerInfo> GetDefaultTriggers()
         {
-            return new ITaskTrigger[]
+            return new TaskTriggerInfo[]
             {
                 //new WeeklyTrigger { DayOfWeek = DayOfWeek.Sunday, TimeOfDay = TimeSpan.FromHours(3) }
             };

@@ -16,12 +16,12 @@
     {
         private const string ApiVersion = "2.0";
 
-        private readonly IHttpClient     _httpClient;
+        private readonly IHttpClient _httpClient;
         private readonly IJsonSerializer _jsonSerializer;
 
         public BaseLastfmApiClient(IHttpClient httpClient, IJsonSerializer jsonSerializer)
         {
-            _httpClient     = httpClient;
+            _httpClient = httpClient;
             _jsonSerializer = jsonSerializer;
         }
 
@@ -32,52 +32,60 @@
         /// <typeparam name="TResponse">The type of the response</typeparam>
         /// <param name="request">The request</param>
         /// <returns>A response with type TResponse</returns>
-        public async Task<TResponse> Post<TRequest, TResponse>(TRequest request) where TRequest: BaseRequest where TResponse: BaseResponse
+        public async Task<TResponse> Post<TRequest, TResponse>(TRequest request) where TRequest : BaseRequest where TResponse : BaseResponse
         {
             var data = request.ToDictionary();
 
             //Append the signature
             Helpers.AppendSignature(ref data);
 
-            using (var stream = await _httpClient.Post(new HttpRequestOptions
+            var options = new HttpRequestOptions
             {
-                Url                   = BuildPostUrl(request.Secure),
-                ResourcePool          = Plugin.LastfmResourcePool,
-                CancellationToken     = CancellationToken.None,
+                Url = BuildPostUrl(request.Secure),
+                ResourcePool = Plugin.LastfmResourcePool,
+                CancellationToken = CancellationToken.None,
                 EnableHttpCompression = false,
-            }, EscapeDictionary(data)))
+
+            };
+
+            options.SetPostData(EscapeDictionary(data));
+
+            using (var response = await _httpClient.Post(options))
             {
-                try
+                using (var stream = response.Content)
                 {
-                    var result = _jsonSerializer.DeserializeFromStream<TResponse>(stream);
+                    try
+                    {
+                        var result = _jsonSerializer.DeserializeFromStream<TResponse>(stream);
 
-                    //Lets Log the error here to ensure all errors are logged
-                    if (result.IsError())
-                        Plugin.Logger.Error(result.Message);
+                        //Lets Log the error here to ensure all errors are logged
+                        if (result.IsError())
+                            Plugin.Logger.Error(result.Message);
 
-                    return result;
-                }
-                catch (Exception e)
-                {
-                    Plugin.Logger.Debug(e.Message);
+                        return result;
+                    }
+                    catch (Exception e)
+                    {
+                        Plugin.Logger.Debug(e.Message);
+                    }
                 }
 
                 return null;
             }
         }
 
-        public async Task<TResponse> Get<TRequest, TResponse>(TRequest request) where TRequest: BaseRequest where TResponse: BaseResponse
+        public async Task<TResponse> Get<TRequest, TResponse>(TRequest request) where TRequest : BaseRequest where TResponse : BaseResponse
         {
             return await Get<TRequest, TResponse>(request, CancellationToken.None);
         }
 
-        public async Task<TResponse> Get<TRequest, TResponse>(TRequest request, CancellationToken cancellationToken) where TRequest: BaseRequest where TResponse: BaseResponse
+        public async Task<TResponse> Get<TRequest, TResponse>(TRequest request, CancellationToken cancellationToken) where TRequest : BaseRequest where TResponse : BaseResponse
         {
             using (var stream = await _httpClient.Get(new HttpRequestOptions
             {
-                Url                   = BuildGetUrl(request.ToDictionary()),
-                ResourcePool          = Plugin.LastfmResourcePool,
-                CancellationToken     = cancellationToken,
+                Url = BuildGetUrl(request.ToDictionary()),
+                ResourcePool = Plugin.LastfmResourcePool,
+                CancellationToken = cancellationToken,
                 EnableHttpCompression = false,
             }))
             {
