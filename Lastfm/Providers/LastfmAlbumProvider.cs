@@ -42,13 +42,16 @@ namespace Lastfm.Providers
         {
             var result = new MetadataResult<MusicAlbum>();
 
+            var musicBrainzId = id.GetProviderId(MetadataProviders.MusicBrainzAlbum) ??
+                id.GetProviderId(MetadataProviders.MusicBrainzReleaseGroup);
+
             var lastFmData = await GetAlbumResult(id, cancellationToken).ConfigureAwait(false);
 
             if (lastFmData != null && lastFmData.album != null)
             {
                 result.HasMetadata = true;
                 result.Item = new MusicAlbum();
-                ProcessAlbumData(result.Item, lastFmData.album);
+                ProcessAlbumData(result.Item, lastFmData.album, musicBrainzId);
             }
 
             return result;
@@ -130,7 +133,7 @@ namespace Lastfm.Providers
         private async Task<LastfmGetAlbumResult> GetAlbumResult(string musicbraizId, CancellationToken cancellationToken)
         {
             // Get albu info using artist and album name
-            var url = LastfmArtistProvider.RootUrl + string.Format("method=album.getInfo&mbid={0}&api_key={1}&format=json", musicbraizId, LastfmArtistProvider.ApiKey);
+            var url = LastfmArtistProvider.RootUrl + string.Format("method=album.getInfo&mbid={0}&api_key={1}&format=json", UrlEncode(musicbraizId), LastfmArtistProvider.ApiKey);
 
             using (var json = await _httpClient.Get(new HttpRequestOptions
             {
@@ -140,11 +143,19 @@ namespace Lastfm.Providers
 
             }).ConfigureAwait(false))
             {
-                return _json.DeserializeFromStream<LastfmGetAlbumResult>(json);
+                using (var reader = new StreamReader(json))
+                {
+                    var jsonText = await reader.ReadToEndAsync().ConfigureAwait(false);
+
+                    // Fix their bad json
+                    jsonText = jsonText.Replace("\"#text\"", "\"url\"");
+
+                    return _json.DeserializeFromString<LastfmGetAlbumResult>(jsonText);
+                }
             }
         }
 
-        private void ProcessAlbumData(MusicAlbum item, LastfmAlbum data)
+        private void ProcessAlbumData(MusicAlbum item, LastfmAlbum data, string musicBrainzId)
         {
             var overview = data.wiki != null ? data.wiki.content : null;
 
@@ -179,6 +190,7 @@ namespace Lastfm.Providers
             var musicBrainzId = item.GetProviderId(MetadataProviders.MusicBrainzAlbum) ??
                 item.GetProviderId(MetadataProviders.MusicBrainzReleaseGroup);
 
+            
             if (!string.IsNullOrEmpty(musicBrainzId) && !string.IsNullOrEmpty(url))
             {
                 LastfmHelper.SaveImageInfo(_config.ApplicationPaths, _logger, musicBrainzId, url, imageSize);
