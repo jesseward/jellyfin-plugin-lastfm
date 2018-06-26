@@ -186,10 +186,6 @@ namespace Lastfm.Providers
 
             string imageSize;
             var url = LastfmHelper.GetImageUrl(data, out imageSize);
-
-            var musicBrainzId = item.GetProviderId(MetadataProviders.MusicBrainzAlbum) ??
-                item.GetProviderId(MetadataProviders.MusicBrainzReleaseGroup);
-
             
             if (!string.IsNullOrEmpty(musicBrainzId) && !string.IsNullOrEmpty(url))
             {
