@@ -103,7 +103,6 @@
             //Make sure the track has been fully played
             if (!e.PlayedToCompletion)
             {
-                Plugin.Logger.Debug("'{0}' not played to completion, not scrobbling", item.Name);
                 return;
             }
 
@@ -125,7 +124,6 @@
             var user = e.Users.FirstOrDefault();
             if (user == null)
             {
-                Plugin.Logger.Debug("No user");
                 return;
             }
 
@@ -164,7 +162,6 @@
             var user = e.Users.FirstOrDefault();
             if (user == null)
             {
-                Plugin.Logger.Debug("No user");
                 return;
             }
 
@@ -190,15 +187,6 @@
 
             var item = e.Item as Audio;
             _apiClient.NowPlaying(item, lastfmUser);
-        }
-
-        /// <summary>
-        /// Called when [configuration updated].
-        /// </summary>
-        /// <param name="oldConfig">The old config.</param>
-        /// <param name="newConfig">The new config.</param>
-        public void OnConfigurationUpdated(PluginConfiguration oldConfig, PluginConfiguration newConfig)
-        {
         }
 
         /// <summary>

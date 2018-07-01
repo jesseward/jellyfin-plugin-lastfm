@@ -15,11 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="mediabrowser.server.core" Version="3.3.51-beta" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Providers\" />
+    <PackageReference Include="mediabrowser.server.core" Version="3.3.59-beta" />
   </ItemGroup>
 
 </Project>

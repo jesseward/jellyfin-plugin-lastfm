@@ -49,7 +49,7 @@
             };
         }
 
-        private Guid _id = new Guid("E603A45D-7088-4EE0-892D-B7CA8BC0B513");
+        private Guid _id = new Guid("de7fe7f0-b048-439e-a431-b1a7e99c930d");
         public override Guid Id
         {
             get { return _id; }
@@ -61,7 +61,7 @@
         /// <value>The name.</value>
         public override string Name
         {
-            get { return "Last.fm Scrobbler"; }
+            get { return "Last.fm"; }
         }
 
         /// <summary>
@@ -81,18 +81,5 @@
         /// </summary>
         /// <value>The instance.</value>
         public static Plugin Instance { get; private set; }
-
-        /// <summary>
-        /// Updates the configuration.
-        /// </summary>
-        /// <param name="configuration">The configuration.</param>
-        public override void UpdateConfiguration(BasePluginConfiguration configuration)
-        {
-            var oldConfig = Configuration;
-
-            base.UpdateConfiguration(configuration);
-
-            ServerEntryPoint.Instance.OnConfigurationUpdated(oldConfig, (PluginConfiguration)configuration);
-        }
     }
 }
