@@ -21,11 +21,13 @@
         private readonly IUserManager _userManager;
         private readonly LastfmApiClient _apiClient;
         private readonly IUserDataManager _userDataManager;
+        private ILibraryManager _libraryManager;
 
-        public ImportLastfmData(IHttpClient httpClient, IJsonSerializer jsonSerializer, IUserManager userManager, IUserDataManager userDataManager)
+        public ImportLastfmData(IHttpClient httpClient, IJsonSerializer jsonSerializer, IUserManager userManager, IUserDataManager userDataManager, ILibraryManager libraryManager)
         {
             _userManager = userManager;
             _userDataManager = userDataManager;
+            _libraryManager = libraryManager;
 
             _apiClient = new LastfmApiClient(httpClient, jsonSerializer);
         }
@@ -96,7 +98,12 @@
 
         private async Task SyncDataforUserByArtistBulk(User user, IProgress<double> progress, CancellationToken cancellationToken, double maxProgress, double progressOffset)
         {
-            var artists = user.RootFolder.GetRecursiveChildren().OfType<MusicArtist>().ToList();
+            var artists = _libraryManager.GetArtists(new InternalItemsQuery(user))
+                .Items
+                .Select(i => i.Item1)
+                .Cast<MusicArtist>()
+                .ToList();
+
             var lastFmUser = UserHelpers.GetUser(user);
 
             var totalSongs = 0;

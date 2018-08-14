@@ -49,11 +49,6 @@ namespace Lastfm.Providers
         {
             string id;
             info.ProviderIds.TryGetValue(MetadataProviders.MusicBrainzAlbumArtist.ToString(), out id);
-
-            if (string.IsNullOrEmpty(id))
-            {
-                info.ArtistProviderIds.TryGetValue(MetadataProviders.MusicBrainzArtist.ToString(), out id);
-            }
             
             if (string.IsNullOrEmpty(id))
             {
@@ -68,12 +63,6 @@ namespace Lastfm.Providers
         {
             string id;
             info.ProviderIds.TryGetValue(MetadataProviders.MusicBrainzArtist.ToString(), out id);
-
-            if (string.IsNullOrEmpty(id))
-            {
-                return info.SongInfos.Select(i => i.GetProviderId(MetadataProviders.MusicBrainzAlbumArtist))
-                    .FirstOrDefault(i => !string.IsNullOrEmpty(i));
-            }
 
             return id;
         }
