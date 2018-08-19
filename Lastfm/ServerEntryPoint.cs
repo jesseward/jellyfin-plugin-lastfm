@@ -65,7 +65,7 @@
             if (!e.SaveReason.Equals(UserDataSaveReason.UpdateUserRating))
                 return;
 
-            var lastfmUser = Utils.UserHelpers.GetUser(e.UserId);
+            var lastfmUser = Utils.UserHelpers.GetUser(e.User.Id);
             if (lastfmUser == null)
             {
                 Plugin.Logger.Debug("Could not find user");

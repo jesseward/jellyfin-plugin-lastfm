@@ -164,7 +164,7 @@
 
                     Plugin.Logger.Debug("Found match for {0} = {1}", song.Name, matchedSong.Name);
 
-                    var userData = _userDataManager.GetUserData(user.Id, song);
+                    var userData = _userDataManager.GetUserData(user, song);
 
                     //Check if its a favourite track
                     if (hasLovedTracks && lastFmUser.Options.SyncFavourites)
@@ -194,7 +194,7 @@
                         userData.LastPlayedDate = null;
                     }
 
-                    _userDataManager.SaveUserData(user.Id, song, userData, UserDataSaveReason.UpdateUserRating, cancellationToken);
+                    _userDataManager.SaveUserData(user.InternalId, song, userData, UserDataSaveReason.UpdateUserRating, cancellationToken);
                 }
             }
 
