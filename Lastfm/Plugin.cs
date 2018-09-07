@@ -10,6 +10,8 @@
     using System.Threading;
     using System.Linq;
     using System.Collections.Generic;
+    using System.IO;
+    using MediaBrowser.Model.Drawing;
 
     /// <summary>
     /// Class Plugin
@@ -73,6 +75,20 @@
             get
             {
                 return "Scrobble your music collection to Last.fm";
+            }
+        }
+
+        public Stream GetThumbImage()
+        {
+            var type = GetType();
+            return type.Assembly.GetManifestResourceStream(type.Namespace + ".thumb.png");
+        }
+
+        public ImageFormat ThumbImageFormat
+        {
+            get
+            {
+                return ImageFormat.Png;
             }
         }
 
