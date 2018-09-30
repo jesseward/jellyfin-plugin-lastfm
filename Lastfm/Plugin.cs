@@ -16,7 +16,7 @@
     /// <summary>
     /// Class Plugin
     /// </summary>
-    public class Plugin : BasePlugin<PluginConfiguration>
+    public class Plugin : BasePlugin<PluginConfiguration>, IHasThumbImage
     {
         /// <summary>
         /// Flag set when an Import Syncing task is running
