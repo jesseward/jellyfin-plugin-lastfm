@@ -23,8 +23,6 @@
         /// </summary>
         public static bool Syncing { get; internal set; }
         
-        internal static readonly SemaphoreSlim LastfmResourcePool = new SemaphoreSlim(4, 4);
-
         //Global logging instance
         public static ILogger Logger { get; set; }
 

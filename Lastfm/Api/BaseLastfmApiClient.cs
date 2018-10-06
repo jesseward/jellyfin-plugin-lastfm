@@ -42,7 +42,6 @@
             var options = new HttpRequestOptions
             {
                 Url = BuildPostUrl(request.Secure),
-                ResourcePool = Plugin.LastfmResourcePool,
                 CancellationToken = CancellationToken.None,
                 EnableHttpCompression = false,
 
@@ -84,7 +83,6 @@
             using (var stream = await _httpClient.Get(new HttpRequestOptions
             {
                 Url = BuildGetUrl(request.ToDictionary()),
-                ResourcePool = Plugin.LastfmResourcePool,
                 CancellationToken = cancellationToken,
                 EnableHttpCompression = false,
             }))
