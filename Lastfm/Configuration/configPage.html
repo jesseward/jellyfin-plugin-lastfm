@@ -4,36 +4,35 @@
     <title>Last.fm Scrobbler Configuration</title>
 </head>
 <body>
-    <div id="LastfmScrobblerConfigurationPage" data-role="page" class="page type-interior pluginConfigurationPage">
+    <div id="LastfmScrobblerConfigurationPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-select,emby-checkbox">
 
         <div data-role="content">
             <div class="content-primary">
                 <form id="LastfmScrobblerConfigurationForm">
-                    <ul class="ulForm" data-role="listview">
-                        <li>
-                            <label for="user">Configure Last.fm for:</label>
-                            <select id="user" name="user"></select>
-                        </li>
-                        <li>
-                            <label for="username">Username</label>
-                            <input type="text" id="username" name="username" required="required" placeholder="Your Last.fm Username" />
-                        </li>
-                        <li>
-                            <label for="password">Password</label>
-                            <input type="password" id="password" name="password" required="required" placeholder="Your Last.fm Password" />
-                        </li>
-                        <li>
-                            <input type="checkbox" class="chkStandardFilter" name="optionScrobble" id="optionScrobble" data-mini="true"  />
-                            <label for="optionScrobble">Enable Scrobbling for this user?</label>
-                            <input type="checkbox" class="chkStandardFilter" name="optionFavourite" id="optionFavourite" data-mini="true"  />
-                            <label for="optionFavourite">Sync favourites for this user?</label>
-                        </li>
-                        <li>
-                            <button type="submit" data-theme="b">Save</button>
-                            <button id="removeUser">Delete users configuration</button>
-                            <button type="button" onclick="history.back();">Cancel</button>
-                        </li>
-                    </ul>
+                        <div class="selectContainer">
+							<select is="emby-select" id="user" name="user" label="Configure Last.fm for:"></select>
+						</div>
+						<div class="inputContainer">
+							<input is="emby-input" id="username" name="username" type="text" label="Username:" />
+						</div>
+						<div class="inputContainer">
+							<input is="emby-input" id="password" name="password" type="text" label="Password:" />
+						</div>
+                        <div class="checkboxContainer">
+							<label>
+								<input is="emby-checkbox" type="checkbox" id="optionScrobble" name="optionScrobble" />
+								<span>Enable Scrobbling for this user?</span>
+							</label>
+						</div>
+						<div class="checkboxContainer">
+							<label>
+								<input is="emby-checkbox" type="checkbox" id="optionFavourite" name="optionFavourite" />
+								<span>Sync favourites for this user?</span>
+							</label>
+						</div>
+                        <div>
+							<button is="emby-button" type="submit" class="raised button-submit block"><span>${ButtonSave}</span></button>
+						</div>
                 </form>
             </div>
         </div>
@@ -41,7 +40,7 @@
         <script type="text/javascript">
 
             var LastfmScrobblerConfigurationPage = {
-                _pluginUniqueId: "1f5e1261-1e09-4bed-8839-dc07afe096c2",
+                _pluginUniqueId: "de7fe7f0-b048-439e-a431-b1a7e99c930d",
                 _users:  [],
                 _config: [],
 
