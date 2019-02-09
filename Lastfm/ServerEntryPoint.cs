@@ -55,7 +55,7 @@
         /// <summary>
         /// Let last fm know when a user favourites or unfavourites a track
         /// </summary>
-        void UserDataSaved(object sender, UserDataSaveEventArgs e)
+        async void UserDataSaved(object sender, UserDataSaveEventArgs e)
         {
             //We only care about audio
             if (!(e.Item is Audio))
@@ -84,7 +84,7 @@
             if (Plugin.Syncing)
                 return;
 
-            _apiClient.LoveTrack(item, lastfmUser, e.UserData.IsFavorite);
+            await _apiClient.LoveTrack(item, lastfmUser, e.UserData.IsFavorite).ConfigureAwait(false);
         }
 
 
@@ -92,7 +92,7 @@
         /// Let last.fm know when a track has finished.
         /// Playback stopped is run when a track is finished.
         /// </summary>
-        private void PlaybackStopped(object sender, PlaybackStopEventArgs e)
+        private async void PlaybackStopped(object sender, PlaybackStopEventArgs e)
         {
             //We only care about audio
             if (!(e.Item is Audio))
@@ -147,13 +147,13 @@
                 return;
             }
 
-            _apiClient.Scrobble(item, lastfmUser);
+            await _apiClient.Scrobble(item, lastfmUser).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Let Last.fm know when a user has started listening to a track
         /// </summary>
-        private void PlaybackStart(object sender, PlaybackProgressEventArgs e)
+        private async void PlaybackStart(object sender, PlaybackProgressEventArgs e)
         {
             //We only care about audio
             if (!(e.Item is Audio))
@@ -186,7 +186,7 @@
             }
 
             var item = e.Item as Audio;
-            _apiClient.NowPlaying(item, lastfmUser);
+            await _apiClient.NowPlaying(item, lastfmUser).ConfigureAwait(false);
         }
 
         /// <summary>

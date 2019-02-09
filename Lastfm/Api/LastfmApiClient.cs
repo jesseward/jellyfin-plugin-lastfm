@@ -53,15 +53,23 @@
                 SessionKey = user.SessionKey
             };
 
-            var response = await Post<ScrobbleRequest, ScrobbleResponse>(request);
-
-            if (response != null && !response.IsError())
+            try
             {
-                Plugin.Logger.Info("{0} played '{1}' - {2} - {3}", user.Username, request.Track, request.Album, request.Artist);
-                return;
-            }
+                //Send the request
+                var response = await Post<ScrobbleRequest, ScrobbleResponse>(request);
 
-            Plugin.Logger.Error("Failed to Scrobble track: {0}", item.Name);
+                if (response != null && !response.IsError())
+                {
+                    Plugin.Logger.Info("{0} played '{1}' - {2} - {3}", user.Username, request.Track, request.Album, request.Artist);
+                    return;
+                }
+
+                Plugin.Logger.Error("Failed to Scrobble track: {0}", item.Name);
+            }
+            catch (Exception ex)
+            {
+                Plugin.Logger.ErrorException("Failed to Scrobble track: {0}", ex, item.Name);
+            }
         }
 
         public async Task NowPlaying(Audio item, LastfmUser user)
@@ -81,15 +89,22 @@
             if (item.RunTimeTicks != null)
                 request.Duration = Convert.ToInt32(TimeSpan.FromTicks((long)item.RunTimeTicks).TotalSeconds);
 
-            var response = await Post<NowPlayingRequest, ScrobbleResponse>(request);
-
-            if (response != null && !response.IsError())
+            try
             {
-                Plugin.Logger.Info("{0} is now playing '{1}' - {2} - {3}", user.Username, request.Track, request.Album, request.Artist);
-                return;
-            }
+                var response = await Post<NowPlayingRequest, ScrobbleResponse>(request);
 
-            Plugin.Logger.Error("Failed to send now playing for track: {0}", item.Name);
+                if (response != null && !response.IsError())
+                {
+                    Plugin.Logger.Info("{0} is now playing '{1}' - {2} - {3}", user.Username, request.Track, request.Album, request.Artist);
+                    return;
+                }
+
+                Plugin.Logger.Error("Failed to send now playing for track: {0}", item.Name);
+            }
+            catch (Exception ex)
+            {
+                Plugin.Logger.ErrorException("Failed to send now playing for track: {0}", ex, item.Name);
+            }
         }
 
         /// <summary>
@@ -111,17 +126,25 @@
                 SessionKey = user.SessionKey,
             };
 
-            //Send the request
-            var response = await Post<TrackLoveRequest, BaseResponse>(request);
-
-            if (response != null && !response.IsError())
+            try
             {
-                Plugin.Logger.Info("{0} {2}loved track '{1}'", user.Username, item.Name, (love ? "" : "un"));
-                return true;
-            }
+                //Send the request
+                var response = await Post<TrackLoveRequest, BaseResponse>(request);
 
-            Plugin.Logger.Error("{0} Failed to love = {3} track '{1}' - {2}", user.Username, item.Name, response.Message, love);
-            return false;
+                if (response != null && !response.IsError())
+                {
+                    Plugin.Logger.Info("{0} {2}loved track '{1}'", user.Username, item.Name, (love ? "" : "un"));
+                    return true;
+                }
+
+                Plugin.Logger.Error("{0} Failed to love = {3} track '{1}' - {2}", user.Username, item.Name, response.Message, love);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Plugin.Logger.ErrorException("{0} Failed to love = {2} track '{1}'", ex, user.Username, item.Name, love);
+                return false;
+            }
         }
 
         /// <summary>
