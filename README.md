@@ -1,2 +1,3 @@
-# Lastfm
-A Lastfm plugin for Emby Server
+# jellyfin-plugin-lastfm
+
+Enables audio scrobbling to Last.FM as well as a metadata fetcher source.
