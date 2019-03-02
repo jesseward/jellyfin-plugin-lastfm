@@ -51,12 +51,13 @@
         /// <summary>
         /// Runs this instance.
         /// </summary>
-        public void Run()
+        public Task RunAsync()
         {
             //Bind events
             _sessionManager.PlaybackStart   += PlaybackStart;
             _sessionManager.PlaybackStopped += PlaybackStopped;
             _userDataManager.UserDataSaved  += UserDataSaved;
+            return Task.CompletedTask;
         }
 
         /// <summary>
