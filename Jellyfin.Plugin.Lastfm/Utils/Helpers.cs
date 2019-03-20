@@ -17,11 +17,11 @@
             var md5 = MD5.Create();
 
             var inputBytes = Encoding.ASCII.GetBytes(input);
-            var hashBytes  = md5.ComputeHash(inputBytes);
+            var hashBytes = md5.ComputeHash(inputBytes);
 
             // Convert the byte array to hexadecimal string
             var sb = new StringBuilder();
-            
+
             foreach (byte b in hashBytes)
                 sb.Append(b.ToString("X2"));
 
@@ -71,15 +71,16 @@
         //The nuget doesn't seem to have GetProviderId for artists
         public static string GetMusicBrainzArtistId(MusicArtist artist)
         {
-            string mbArtistId;
-            
+
             if (artist.ProviderIds == null)
             {
                 return null;
             }
 
-            if (artist.ProviderIds.TryGetValue("MusicBrainzArtist", out mbArtistId)) 
+            if (artist.ProviderIds.TryGetValue("MusicBrainzArtist", out string mbArtistId))
+            {
                 return mbArtistId;
+            }
             return null;
         }
 

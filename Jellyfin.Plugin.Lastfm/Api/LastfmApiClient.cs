@@ -34,9 +34,9 @@
                 Username = username,
                 Password = password,
 
-                ApiKey   = Strings.Keys.LastfmApiKey,
-                Method   = Strings.Methods.GetMobileSession,
-                Secure   = true
+                ApiKey = Strings.Keys.LastfmApiKey,
+                Method = Strings.Methods.GetMobileSession,
+                Secure = true
             };
 
             var response = await Post<MobileSessionRequest, MobileSessionResponse>(request);
@@ -49,24 +49,32 @@
         {
             var request = new ScrobbleRequest
             {
-                Track      = item.Name,
-                Album      = item.Album,
-                Artist     = item.Artists.First(),
-                Timestamp  = Helpers.CurrentTimestamp(),
+                Track = item.Name,
+                Artist = item.Artists.First(),
+                Timestamp = Helpers.CurrentTimestamp(),
 
-                ApiKey     = Strings.Keys.LastfmApiKey,
-                Method     = Strings.Methods.Scrobble,
-                SessionKey = user.SessionKey
+                ApiKey = Strings.Keys.LastfmApiKey,
+                Method = Strings.Methods.Scrobble,
+                SessionKey = user.SessionKey,
+                Secure = true
             };
+
+            if (!string.IsNullOrWhiteSpace(item.Album))
+            {
+                request.Album = item.Album;
+            }
+            if (item.ProviderIds.ContainsKey("MusicBrainzTrack"))
+            {
+                request.MbId = item.ProviderIds["MusicBrainzTrack"];
+            }
 
             try
             {
-                //Send the request
+                // Send the request
                 var response = await Post<ScrobbleRequest, ScrobbleResponse>(request);
-
                 if (response != null && !response.IsError())
                 {
-                    _logger.LogInformation("{0} played '{1}' - {2} - {3}", user.Username, request.Track, request.Album, request.Artist);
+                    _logger.LogInformation("{0} played artist={1}, track={2}, album={3}", user.Username, request.Artist, request.Track, request.Album);
                     return;
                 }
 
@@ -74,7 +82,7 @@
             }
             catch (Exception ex)
             {
-                _logger.LogError("Failed to Scrobble track: {0}", ex, item.Name);
+                _logger.LogError("Failed to Scrobble track: track: ex={0}, name={1}, track={2}, artist={3}, album={4}, mbid={5}", ex, item.Name, request.Track, request.Artist, request.Album, request.MbId);
             }
         }
 
@@ -82,26 +90,35 @@
         {
             var request = new NowPlayingRequest
             {
-                Track  = item.Name,
-                Album  = item.Album,
+                Track = item.Name,
                 Artist = item.Artists.First(),
 
                 ApiKey = Strings.Keys.LastfmApiKey,
                 Method = Strings.Methods.NowPlaying,
-                SessionKey = user.SessionKey
+                SessionKey = user.SessionKey,
+                Secure = true
             };
 
-            //Add duration
+
+            if (!string.IsNullOrWhiteSpace(item.Album))
+            {
+                request.Album = item.Album;
+            }
+            if (item.ProviderIds.ContainsKey("MusicBrainzTrack"))
+            {
+                request.MbId = item.ProviderIds["MusicBrainzTrack"];
+            }
+
+            // Add duration
             if (item.RunTimeTicks != null)
                 request.Duration = Convert.ToInt32(TimeSpan.FromTicks((long)item.RunTimeTicks).TotalSeconds);
 
             try
             {
                 var response = await Post<NowPlayingRequest, ScrobbleResponse>(request);
-
                 if (response != null && !response.IsError())
                 {
-                    _logger.LogInformation("{0} is now playing '{1}' - {2} - {3}", user.Username, request.Track, request.Album, request.Artist);
+                    _logger.LogInformation("{0} is now playing artist={1}, track={2}, album={3}", user.Username, request.Artist, request.Track, request.Album);
                     return;
                 }
 
@@ -109,7 +126,7 @@
             }
             catch (Exception ex)
             {
-                _logger.LogError("Failed to send now playing for track: {0}", ex, item.Name);
+                _logger.LogError("Failed to send now playing for track: ex={0}, name={1}, track={2}, artist={3}, album={4}, mbid={5}", ex, item.Name, request.Track, request.Artist, request.Album, request.MbId);
             }
         }
 
@@ -125,11 +142,12 @@
             var request = new TrackLoveRequest
             {
                 Artist = item.Artists.First(),
-                Track  = item.Name,
+                Track = item.Name,
 
-                ApiKey     = Strings.Keys.LastfmApiKey,
-                Method     = love ? Strings.Methods.TrackLove : Strings.Methods.TrackUnlove,
+                ApiKey = Strings.Keys.LastfmApiKey,
+                Method = love ? Strings.Methods.TrackLove : Strings.Methods.TrackUnlove,
                 SessionKey = user.SessionKey,
+                Secure = true
             };
 
             try
@@ -168,9 +186,10 @@
         {
             var request = new GetLovedTracksRequest
             {
-                User   = user.Username,
+                User = user.Username,
                 ApiKey = Strings.Keys.LastfmApiKey,
-                Method = Strings.Methods.GetLovedTracks
+                Method = Strings.Methods.GetLovedTracks,
+                Secure = true
             };
 
             return await Get<GetLovedTracksRequest, LovedTracksResponse>(request);
@@ -180,11 +199,12 @@
         {
             var request = new GetTracksRequest
             {
-                User   = user.Username,
+                User = user.Username,
                 Artist = artist.Name,
                 ApiKey = Strings.Keys.LastfmApiKey,
                 Method = Strings.Methods.GetTracks,
-                Limit  = 1000
+                Limit = 1000,
+                Secure = true
             };
 
             return await Get<GetTracksRequest, GetTracksResponse>(request, cancellationToken);
@@ -194,11 +214,13 @@
         {
             var request = new GetTracksRequest
             {
-                User   = user.Username,
+                User = user.Username,
                 ApiKey = Strings.Keys.LastfmApiKey,
                 Method = Strings.Methods.GetTracks,
-                Limit  = limit,
-                Page   = page
+                Limit = limit,
+                Page = page,
+                Secure = true
+
             };
 
             return await Get<GetTracksRequest, GetTracksResponse>(request, cancellationToken);

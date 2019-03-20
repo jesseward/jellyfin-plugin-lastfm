@@ -9,6 +9,7 @@
 
         public static class Methods
         {
+            // Last.FM API specs located at https://www.last.fm/api
             public static string Scrobble         = "track.scrobble";
             public static string NowPlaying       = "track.updateNowPlaying";
             public static string GetMobileSession = "auth.getMobileSession";

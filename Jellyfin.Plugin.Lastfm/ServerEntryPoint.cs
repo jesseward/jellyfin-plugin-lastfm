@@ -19,7 +19,7 @@
     /// </summary>
     public class ServerEntryPoint : IServerEntryPoint
     {
-        private readonly ISessionManager  _sessionManager;
+        private readonly ISessionManager _sessionManager;
         private readonly IUserDataManager _userDataManager;
 
         private LastfmApiClient _apiClient;
@@ -40,11 +40,11 @@
         {
             _logger = loggerFactory.CreateLogger(Plugin.Instance.Name);
 
-            _sessionManager  = sessionManager;
+            _sessionManager = sessionManager;
             _userDataManager = userDataManager;
 
             _apiClient = new LastfmApiClient(httpClient, jsonSerializer, _logger);
-            
+
             Instance = this;
         }
 
@@ -54,9 +54,9 @@
         public Task RunAsync()
         {
             //Bind events
-            _sessionManager.PlaybackStart   += PlaybackStart;
+            _sessionManager.PlaybackStart += PlaybackStart;
             _sessionManager.PlaybackStopped += PlaybackStopped;
-            _userDataManager.UserDataSaved  += UserDataSaved;
+            _userDataManager.UserDataSaved += UserDataSaved;
             return Task.CompletedTask;
         }
 
@@ -65,11 +65,11 @@
         /// </summary>
         async void UserDataSaved(object sender, UserDataSaveEventArgs e)
         {
-            //We only care about audio
+            // We only care about audio
             if (!(e.Item is Audio))
                 return;
 
-            //We also only care about User rating changes
+            // We also only care about User rating changes
             if (!e.SaveReason.Equals(UserDataSaveReason.UpdateUserRating))
                 return;
 
@@ -88,7 +88,7 @@
 
             var item = e.Item as Audio;
 
-            //Dont do if syncing
+            // Dont do if syncing
             if (Plugin.Syncing)
                 return;
 
@@ -102,20 +102,20 @@
         /// </summary>
         private async void PlaybackStopped(object sender, PlaybackStopEventArgs e)
         {
-            //We only care about audio
+            // We only care about audio
             if (!(e.Item is Audio))
                 return;
 
             var item = e.Item as Audio;
 
-            //Make sure the track has been fully played
+            // Make sure the track has been fully played
             if (!e.PlayedToCompletion)
             {
                 return;
             }
 
-            //Played to completion will sometimes be true even if the track has only played 10% so check the playback ourselfs (it must use the app settings or something)
-            //Make sure 80% of the track has been played back
+            // Played to completion will sometimes be true even if the track has only played 10% so check the playback ourselfs (it must use the app settings or something)
+            // Make sure 80% of the track has been played back
             if (e.PlaybackPositionTicks == null)
             {
                 _logger.LogDebug("Playback ticks for {0} is null", item.Name);
@@ -125,7 +125,7 @@
             var playPercent = ((double)e.PlaybackPositionTicks / item.RunTimeTicks) * 100;
             if (playPercent < 80)
             {
-               _logger.LogDebug("'{0}' only played {1}%, not scrobbling", item.Name, playPercent);
+                _logger.LogDebug("'{0}' only played {1}%, not scrobbling", item.Name, playPercent);
                 return;
             }
 
@@ -142,7 +142,7 @@
                 return;
             }
 
-            //User doesn't want to scrobble
+            // User doesn't want to scrobble
             if (!lastfmUser.Options.Scrobble)
             {
                 _logger.LogDebug("{0} ({1}) does not want to scrobble", user.Name, lastfmUser.Username);
@@ -155,6 +155,11 @@
                 return;
             }
 
+            if (string.IsNullOrWhiteSpace(item.Artists.First()) || string.IsNullOrWhiteSpace(item.Name))
+            {
+                _logger.LogInformation("track {0} is missing  artist ({1}) or track name ({2}) metadata. Not submitting", item.Path, item.Artists.First(), item.Name);
+                return;
+            }
             await _apiClient.Scrobble(item, lastfmUser).ConfigureAwait(false);
         }
 
@@ -163,7 +168,7 @@
         /// </summary>
         private async void PlaybackStart(object sender, PlaybackProgressEventArgs e)
         {
-            //We only care about audio
+            // We only care about audio
             if (!(e.Item is Audio))
                 return;
 
@@ -180,7 +185,7 @@
                 return;
             }
 
-            //User doesn't want to scrobble
+            // User doesn't want to scrobble
             if (!lastfmUser.Options.Scrobble)
             {
                 _logger.LogDebug("{0} ({1}) does not want to scrobble", user.Name, lastfmUser.Username);
@@ -194,6 +199,11 @@
             }
 
             var item = e.Item as Audio;
+            if (string.IsNullOrWhiteSpace(item.Artists.First()) || string.IsNullOrWhiteSpace(item.Name))
+            {
+                _logger.LogInformation("track {0} is missing  artist ({1}) or track name ({2}) metadata. Not submitting", item.Path, item.Artists.First(), item.Name);
+                return;
+            }
             await _apiClient.NowPlaying(item, lastfmUser).ConfigureAwait(false);
         }
 
@@ -202,12 +212,12 @@
         /// </summary>
         public void Dispose()
         {
-            //Unbind events
-            _sessionManager.PlaybackStart   -= PlaybackStart;
+            // Unbind events
+            _sessionManager.PlaybackStart -= PlaybackStart;
             _sessionManager.PlaybackStopped -= PlaybackStopped;
-            _userDataManager.UserDataSaved  -= UserDataSaved;
+            _userDataManager.UserDataSaved -= UserDataSaved;
 
-            //Clean up
+            // Clean up
             _apiClient = null;
 
         }

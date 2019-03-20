@@ -4,7 +4,6 @@
     using System;
     using System.IO;
     using System.Linq;
-    using Microsoft.Extensions.Logging;
 
     public static class LastfmHelper
     {
@@ -37,7 +36,9 @@
             return null;
         }
 
-        public static void SaveImageInfo(IApplicationPaths appPaths, ILogger logger, string musicBrainzId, string url, string size)
+        /// <exception cref="ArgumentNullException">thrown when string params are null.</exception>
+        /// <exception cref="IOException">Unable to perform file operation on cachePath.</exception>
+        public static void SaveImageInfo(IApplicationPaths appPaths, string musicBrainzId, string url, string size)
         {
             if (appPaths == null)
             {
@@ -54,23 +55,16 @@
 
             var cachePath = Path.Combine(appPaths.CachePath, "lastfm", musicBrainzId, "image.txt");
 
-            try
+            if (string.IsNullOrEmpty(url))
             {
-                if (string.IsNullOrEmpty(url))
-                {
-                    File.Delete(cachePath);
-                }
-                else
-                {
-                    Directory.CreateDirectory(Path.GetDirectoryName(cachePath));
-                    File.WriteAllText(cachePath, url + "|" + size);
-                }
+                File.Delete(cachePath);
             }
-            catch (IOException ex)
+            else
             {
-                // Don't fail if this is unable to write
-                logger.LogError("Error saving to {0}", ex, cachePath);
+                Directory.CreateDirectory(Path.GetDirectoryName(cachePath));
+                File.WriteAllText(cachePath, url + "|" + size);
             }
+
         }
     }
 }

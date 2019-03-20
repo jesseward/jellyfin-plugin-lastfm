@@ -38,9 +38,12 @@
         /// <returns>A response with type TResponse</returns>
         public async Task<TResponse> Post<TRequest, TResponse>(TRequest request) where TRequest : BaseRequest where TResponse : BaseResponse
         {
-            var data = request.ToDictionary();
+            // remove any keys where the values == null .
+            var data = request.ToDictionary()
+                    .Where(k => !string.IsNullOrWhiteSpace(k.Value))
+                    .ToDictionary(k => k.Key, k => k.Value);
 
-            //Append the signature
+            // Append the signature
             Helpers.AppendSignature(ref data);
 
             var options = new HttpRequestOptions
@@ -48,11 +51,9 @@
                 Url = BuildPostUrl(request.Secure),
                 CancellationToken = CancellationToken.None,
                 EnableHttpCompression = false,
-
             };
 
             options.SetPostData(EscapeDictionary(data));
-
             using (var response = await _httpClient.Post(options))
             {
                 using (var stream = response.Content)
@@ -60,10 +61,9 @@
                     try
                     {
                         var result = _jsonSerializer.DeserializeFromStream<TResponse>(stream);
-
-                        //Lets Log the error here to ensure all errors are logged
+                        // Lets Log the error here to ensure all errors are logged
                         if (result.IsError())
-                           _logger.LogError(result.Message);
+                            _logger.LogError(result.Message);
 
                         return result;
                     }
@@ -86,7 +86,7 @@
         {
             using (var stream = await _httpClient.Get(new HttpRequestOptions
             {
-                Url = BuildGetUrl(request.ToDictionary()),
+                Url = BuildGetUrl(request.ToDictionary(), request.Secure),
                 CancellationToken = cancellationToken,
                 EnableHttpCompression = false,
             }))
@@ -95,9 +95,9 @@
                 {
                     var result = _jsonSerializer.DeserializeFromStream<TResponse>(stream);
 
-                    //Lets Log the error here to ensure all errors are logged
+                    // Lets Log the error here to ensure all errors are logged
                     if (result.IsError())
-                       _logger.LogError(result.Message);
+                        _logger.LogError(result.Message);
 
                     return result;
                 }
@@ -111,16 +111,17 @@
         }
 
         #region Private methods
-        private static string BuildGetUrl(Dictionary<string, string> requestData)
+        private static string BuildGetUrl(Dictionary<string, string> requestData, bool secure)
         {
-            return String.Format("http://{0}/{1}/?format=json&{2}",
+            return String.Format("{0}://{1}/{2}/?format=json&{3}",
+                                    secure ? "https" : "http",
                                     Strings.Endpoints.LastfmApi,
                                     ApiVersion,
                                     Helpers.DictionaryToQueryString(requestData)
                                 );
         }
 
-        private static string BuildPostUrl(bool secure = false)
+        private static string BuildPostUrl(bool secure)
         {
             return String.Format("{0}://{1}/{2}/?format=json",
                                     secure ? "https" : "http",

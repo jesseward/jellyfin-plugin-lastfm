@@ -185,12 +185,19 @@ namespace Jellyfin.Plugin.Lastfm.Providers
                 }
             }
 
-            string imageSize;
-            var url = LastfmHelper.GetImageUrl(data, out imageSize);
-            
+            var url = LastfmHelper.GetImageUrl(data, out string imageSize);
+
             if (!string.IsNullOrEmpty(musicBrainzId) && !string.IsNullOrEmpty(url))
             {
-                LastfmHelper.SaveImageInfo(_config.ApplicationPaths, _logger, musicBrainzId, url, imageSize);
+                try
+                {
+                    LastfmHelper.SaveImageInfo(_config.ApplicationPaths, musicBrainzId, url, imageSize);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("Failed to save image information {0}", e);
+                }
+
             }
         }
 
