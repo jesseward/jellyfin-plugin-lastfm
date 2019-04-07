@@ -17,14 +17,22 @@
 
         public override Dictionary<string, string> ToDictionary()
         {
-            return new Dictionary<string, string>(base.ToDictionary())
+            var scrobbleRequest = new Dictionary<string, string>(base.ToDictionary())
             {
                 { "track",     Track },
-                { "album",     Album },
                 { "artist",    Artist },
                 { "timestamp", Timestamp.ToString() },
-                { "mbid", MbId }
             };
+            if (!string.IsNullOrWhiteSpace(Album))
+            {
+                scrobbleRequest.Add("album", Album);
+            }
+            if (!string.IsNullOrWhiteSpace(MbId))
+            {
+                scrobbleRequest.Add("mbid", MbId);
+            }
+
+            return scrobbleRequest;
         }
     }
 }

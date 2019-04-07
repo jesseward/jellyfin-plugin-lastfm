@@ -38,10 +38,7 @@
         /// <returns>A response with type TResponse</returns>
         public async Task<TResponse> Post<TRequest, TResponse>(TRequest request) where TRequest : BaseRequest where TResponse : BaseResponse
         {
-            // remove any keys where the values == null .
-            var data = request.ToDictionary()
-                    .Where(k => !string.IsNullOrWhiteSpace(k.Value))
-                    .ToDictionary(k => k.Key, k => k.Value);
+            var data = request.ToDictionary();
 
             // Append the signature
             Helpers.AppendSignature(ref data);
