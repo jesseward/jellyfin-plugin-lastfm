@@ -115,7 +115,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
             {
                 Url = url,
                 CancellationToken = cancellationToken,
-                EnableHttpCompression = false
+                DecompressionMethod = CompressionMethod.None,
 
             }).ConfigureAwait(false))
             {
@@ -140,7 +140,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
             {
                 Url = url,
                 CancellationToken = cancellationToken,
-                EnableHttpCompression = false
+                DecompressionMethod = CompressionMethod.None
 
             }).ConfigureAwait(false))
             {

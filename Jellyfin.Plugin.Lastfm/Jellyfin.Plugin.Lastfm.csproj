@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;</TargetFrameworks>
@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Jellyfin.Controller" Version="10.2.0.1" />
+    <PackageReference Include="Jellyfin.Controller" Version="10.3.7" />
     <PackageReference Include="System.Memory" Version="4.5.2" />
   </ItemGroup>
 

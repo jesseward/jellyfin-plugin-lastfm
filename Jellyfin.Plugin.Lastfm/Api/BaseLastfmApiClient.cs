@@ -47,10 +47,10 @@
             {
                 Url = BuildPostUrl(request.Secure),
                 CancellationToken = CancellationToken.None,
-                EnableHttpCompression = false,
+                DecompressionMethod = CompressionMethod.None,
             };
 
-            options.SetPostData(EscapeDictionary(data));
+            options.RequestContent = _jsonSerializer.SerializeToString(EscapeDictionary(data));
             using (var response = await _httpClient.Post(options))
             {
                 using (var stream = response.Content)
@@ -85,7 +85,7 @@
             {
                 Url = BuildGetUrl(request.ToDictionary(), request.Secure),
                 CancellationToken = cancellationToken,
-                EnableHttpCompression = false,
+                DecompressionMethod = CompressionMethod.None
             }))
             {
                 try
