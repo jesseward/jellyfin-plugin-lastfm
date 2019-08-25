@@ -111,3 +111,6 @@ UpgradeLog*.XML
 # MonoDevelop metafiles
 MediaBrowser.Plugins.Lastfm.userprefs
 *.swp
+config/
+.DS_Store
+localconfig.sh
