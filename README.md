@@ -17,3 +17,22 @@ dotnet build
 ```
 
 If the build is successful, the tool will report the path to your Plugin dll (`Jellyfin.Plugin.Lastfm/bin/Debug/netstandard2.0/Jellyfin.Plugin.Lastfm.dll`)
+
+The plugin should then be copied into your ${CONFIG_DIR}/plugins directory.
+
+# Running Jellyfin from Docker
+
+```
+CACHE_DIR=/path/to/cache
+MEDIA_DIR=/path/to/media
+CONFIG_DIR=/path/to/config
+
+docker run -d \
+    --name jelly \
+    --volume ${CONFIG_DIR}:/config \
+    --volume ${MEDIA_DIR}:/media \
+    --volume ${CACHE_DIR}:/cache \
+    --publish 8096:8096 \
+    --rm \
+jellyfin/jellyfin
+```

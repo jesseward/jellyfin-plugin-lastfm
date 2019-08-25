@@ -48,9 +48,13 @@
                 Url = BuildPostUrl(request.Secure),
                 CancellationToken = CancellationToken.None,
                 DecompressionMethod = CompressionMethod.None,
+                LogRequest = true,
+                LogErrors = true,
+                LogRequestAsDebug = true,
             };
 
-            options.RequestContent = _jsonSerializer.SerializeToString(EscapeDictionary(data));
+            options.RequestContentType = "application/x-www-form-urlencoded";
+            options.RequestContent = SetPostData(data);
             using (var response = await _httpClient.Post(options))
             {
                 using (var stream = response.Content)
@@ -127,10 +131,13 @@
                                 );
         }
 
-        private Dictionary<string, string> EscapeDictionary(Dictionary<string, string> dic)
+        private static string SetPostData(Dictionary<string, string> dic)
         {
-            return dic.ToDictionary(item => item.Key, item => Uri.EscapeDataString(item.Value));
+            var strings = dic.Keys.Select(key => string.Format("{0}={1}", key, Uri.EscapeDataString(dic[key])));
+            return string.Join("&", strings.ToArray());
+
         }
         #endregion
     }
 }
+
