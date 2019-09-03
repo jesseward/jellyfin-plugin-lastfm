@@ -16,9 +16,11 @@ cd jellyfin-plugin-lastfm
 dotnet build
 ```
 
+# INSTALL
+
 If the build is successful, the tool will report the path to your Plugin dll (`Jellyfin.Plugin.Lastfm/bin/Debug/netstandard2.0/Jellyfin.Plugin.Lastfm.dll`)
 
-The plugin should then be copied into your ${CONFIG_DIR}/plugins directory.
+The plugin should then be copied into your Jellyfin ${CONFIG_DIR}/plugins directory.
 
 # Running Jellyfin from Docker
 
