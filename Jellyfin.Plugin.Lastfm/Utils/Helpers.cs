@@ -16,7 +16,7 @@
             // Use input string to calculate MD5 hash
             var md5 = MD5.Create();
 
-            var inputBytes = Encoding.ASCII.GetBytes(input);
+            var inputBytes = Encoding.UTF8.GetBytes(input);
             var hashBytes = md5.ComputeHash(inputBytes);
 
             // Convert the byte array to hexadecimal string
