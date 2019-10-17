@@ -48,9 +48,7 @@
                 Url = BuildPostUrl(request.Secure),
                 CancellationToken = CancellationToken.None,
                 DecompressionMethod = CompressionMethod.None,
-                LogRequest = true,
-                LogErrors = true,
-                LogRequestAsDebug = true,
+                LogErrorResponseBody = true,
             };
 
             options.RequestContentType = "application/x-www-form-urlencoded";
