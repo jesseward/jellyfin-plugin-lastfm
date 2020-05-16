@@ -6,7 +6,7 @@ This plug-in was migrated from the original Emby repository and has been adapted
 
 # Build
 
-.NET core 2 is required to build the LastFM plugin. To install the .NET SDK on Linux or macOS, see the download page at https://dotnet.microsoft.com/download . Native package manager instructions can be found for Debian, RHEL, Ubuntu, Fedora, SLES, and CentOS.
+.NET core 2.1 is required to build the LastFM plugin. To install the .NET SDK on Linux or macOS, see the download page at https://dotnet.microsoft.com/download . Native package manager instructions can be found for Debian, RHEL, Ubuntu, Fedora, SLES, and CentOS.
 
 Once the SDK is installed, run the following.
 
@@ -18,7 +18,7 @@ dotnet build
 
 # INSTALL
 
-If the build is successful, the tool will report the path to your Plugin dll (`Jellyfin.Plugin.Lastfm/bin/Debug/netstandard2.0/Jellyfin.Plugin.Lastfm.dll`)
+If the build is successful, the tool will report the path to your Plugin dll (`Jellyfin.Plugin.Lastfm/bin/Debug/netstandard2.1/Jellyfin.Plugin.Lastfm.dll`)
 
 The plugin should then be copied into your Jellyfin ${CONFIG_DIR}/plugins directory.
 
