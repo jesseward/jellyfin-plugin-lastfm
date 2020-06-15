@@ -28,14 +28,16 @@ namespace Jellyfin.Plugin.Lastfm.Providers
         internal static string ApiKey = "7b76553c3eb1d341d642755aecc40a33";
 
         private readonly IServerConfigurationManager _config;
-        private readonly ILogger _logger;
+        private readonly ILoggerFactory _loggerFactory;
+        private readonly ILogger<LastfmArtistProvider> _logger;
 
-        public LastfmArtistProvider(IHttpClient httpClient, IJsonSerializer json, IServerConfigurationManager config, ILogger logger)
+        public LastfmArtistProvider(IHttpClient httpClient, IJsonSerializer json, IServerConfigurationManager config, ILoggerFactory loggerFactory)
         {
             _httpClient = httpClient;
             _json = json;
             _config = config;
-            _logger = logger;
+            _loggerFactory = loggerFactory;
+            _logger = loggerFactory.CreateLogger<LastfmArtistProvider>();
         }
 
         public Task<IEnumerable<RemoteSearchResult>> GetSearchResults(ArtistInfo searchInfo, CancellationToken cancellationToken)

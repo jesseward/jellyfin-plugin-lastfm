@@ -29,7 +29,7 @@
             get { return Configuration; }
         }
 
-        public Plugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer, ILogger logger)
+        public Plugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer, ILoggerFactory loggerFactory)
             : base(applicationPaths, xmlSerializer)
         {
             Instance = this;

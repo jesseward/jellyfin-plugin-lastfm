@@ -23,14 +23,14 @@
         private readonly LastfmApiClient _apiClient;
         private readonly IUserDataManager _userDataManager;
         private ILibraryManager _libraryManager;
-        private readonly ILogger _logger;
+        private readonly ILogger<ImportLastfmData> _logger;
 
         public ImportLastfmData(IHttpClient httpClient, IJsonSerializer jsonSerializer, IUserManager userManager, IUserDataManager userDataManager, ILibraryManager libraryManager, ILoggerFactory loggerFactory)
         {
             _userManager = userManager;
             _userDataManager = userDataManager;
             _libraryManager = libraryManager;
-            _logger = loggerFactory.CreateLogger("AutoOrganize");
+            _logger = loggerFactory.CreateLogger<ImportLastfmData>();
 
             _apiClient = new LastfmApiClient(httpClient, jsonSerializer, _logger);
         }

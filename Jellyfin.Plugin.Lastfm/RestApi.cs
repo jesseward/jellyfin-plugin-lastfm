@@ -18,11 +18,11 @@
     public class RestApi : IService
     {
         private readonly LastfmApiClient _apiClient;
-        private readonly ILogger _logger;
+        private readonly ILogger<RestApi> _logger;
 
         public RestApi(IJsonSerializer jsonSerializer, IHttpClient httpClient, ILoggerFactory loggerFactory)
         {
-            _logger = loggerFactory.CreateLogger("AutoOrganize");
+            _logger = loggerFactory.CreateLogger<RestApi>();
             _apiClient = new LastfmApiClient(httpClient, jsonSerializer, _logger);
         }
 

@@ -24,14 +24,16 @@ namespace Jellyfin.Plugin.Lastfm.Providers
         private readonly IHttpClient _httpClient;
 
         private readonly IServerConfigurationManager _config;
-        private readonly ILogger _logger;
+        private readonly ILoggerFactory _loggerFactory;
+        private readonly ILogger<LastfmAlbumProvider> _logger;
 
-        public LastfmAlbumProvider(IHttpClient httpClient, IJsonSerializer json, IServerConfigurationManager config, ILogger logger)
+        public LastfmAlbumProvider(IHttpClient httpClient, IJsonSerializer json, IServerConfigurationManager config, ILoggerFactory loggerFactory)
         {
             _httpClient = httpClient;
             _json = json;
             _config = config;
-            _logger = logger;
+            _loggerFactory = loggerFactory;
+            _logger = _loggerFactory.CreateLogger<LastfmAlbumProvider>();
         }
 
         public Task<IEnumerable<RemoteSearchResult>> GetSearchResults(AlbumInfo searchInfo, CancellationToken cancellationToken)

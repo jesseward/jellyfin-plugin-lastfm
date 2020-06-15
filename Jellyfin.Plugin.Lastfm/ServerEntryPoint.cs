@@ -23,7 +23,7 @@
         private readonly IUserDataManager _userDataManager;
 
         private LastfmApiClient _apiClient;
-        private readonly ILogger _logger;
+        private readonly ILogger<ServerEntryPoint> _logger;
 
         /// <summary>
         /// Gets the instance.
@@ -38,7 +38,7 @@
             ILoggerFactory loggerFactory,
             IUserDataManager userDataManager)
         {
-            _logger = loggerFactory.CreateLogger(Plugin.Instance.Name);
+            _logger = loggerFactory.CreateLogger<ServerEntryPoint>();
 
             _sessionManager = sessionManager;
             _userDataManager = userDataManager;
