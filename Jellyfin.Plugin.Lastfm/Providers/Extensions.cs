@@ -21,11 +21,11 @@ namespace Jellyfin.Plugin.Lastfm.Providers
 
         public static string GetReleaseGroupId(this AlbumInfo info)
         {
-            var id = info.GetProviderId(MetadataProviders.MusicBrainzReleaseGroup);
+            var id = info.GetProviderId(MetadataProvider.MusicBrainzReleaseGroup);
 
             if (string.IsNullOrEmpty(id))
             {
-                return info.SongInfos.Select(i => i.GetProviderId(MetadataProviders.MusicBrainzReleaseGroup))
+                return info.SongInfos.Select(i => i.GetProviderId(MetadataProvider.MusicBrainzReleaseGroup))
                     .FirstOrDefault(i => !string.IsNullOrEmpty(i));
             }
 
@@ -34,11 +34,11 @@ namespace Jellyfin.Plugin.Lastfm.Providers
 
         public static string GetReleaseId(this AlbumInfo info)
         {
-            var id = info.GetProviderId(MetadataProviders.MusicBrainzAlbum);
+            var id = info.GetProviderId(MetadataProvider.MusicBrainzAlbum);
 
             if (string.IsNullOrEmpty(id))
             {
-                return info.SongInfos.Select(i => i.GetProviderId(MetadataProviders.MusicBrainzAlbum))
+                return info.SongInfos.Select(i => i.GetProviderId(MetadataProvider.MusicBrainzAlbum))
                     .FirstOrDefault(i => !string.IsNullOrEmpty(i));
             }
 
@@ -48,11 +48,11 @@ namespace Jellyfin.Plugin.Lastfm.Providers
         public static string GetMusicBrainzArtistId(this AlbumInfo info)
         {
             string id;
-            info.ProviderIds.TryGetValue(MetadataProviders.MusicBrainzAlbumArtist.ToString(), out id);
+            info.ProviderIds.TryGetValue(MetadataProvider.MusicBrainzAlbumArtist.ToString(), out id);
             
             if (string.IsNullOrEmpty(id))
             {
-                return info.SongInfos.Select(i => i.GetProviderId(MetadataProviders.MusicBrainzAlbumArtist))
+                return info.SongInfos.Select(i => i.GetProviderId(MetadataProvider.MusicBrainzAlbumArtist))
                     .FirstOrDefault(i => !string.IsNullOrEmpty(i));
             }
 
@@ -62,7 +62,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
         public static string GetMusicBrainzArtistId(this ArtistInfo info)
         {
             string id;
-            info.ProviderIds.TryGetValue(MetadataProviders.MusicBrainzArtist.ToString(), out id);
+            info.ProviderIds.TryGetValue(MetadataProvider.MusicBrainzArtist.ToString(), out id);
 
             return id;
         }

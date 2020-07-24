@@ -45,8 +45,8 @@ namespace Jellyfin.Plugin.Lastfm.Providers
         {
             var result = new MetadataResult<MusicAlbum>();
 
-            var musicBrainzId = id.GetProviderId(MetadataProviders.MusicBrainzAlbum) ??
-                id.GetProviderId(MetadataProviders.MusicBrainzReleaseGroup);
+            var musicBrainzId = id.GetProviderId(MetadataProvider.MusicBrainzAlbum) ??
+                id.GetProviderId(MetadataProvider.MusicBrainzReleaseGroup);
 
             var lastFmData = await GetAlbumResult(id, cancellationToken).ConfigureAwait(false);
 
@@ -117,8 +117,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
             {
                 Url = url,
                 CancellationToken = cancellationToken,
-                DecompressionMethod = CompressionMethod.None,
-
+                DecompressionMethod = CompressionMethods.None
             }).ConfigureAwait(false))
             {
                 using (var reader = new StreamReader(json))
@@ -142,7 +141,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
             {
                 Url = url,
                 CancellationToken = cancellationToken,
-                DecompressionMethod = CompressionMethod.None
+                DecompressionMethod = CompressionMethods.None
 
             }).ConfigureAwait(false))
             {
@@ -162,7 +161,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
         {
             var overview = data.wiki != null ? data.wiki.content : null;
 
-            if (!item.LockedFields.Contains(MetadataFields.Overview))
+            if (!item.LockedFields.Contains(MetadataField.Overview))
             {
                 item.Overview = overview;
             }

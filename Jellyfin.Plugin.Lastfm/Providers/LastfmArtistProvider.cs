@@ -75,7 +75,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
             {
                 Url = url,
                 CancellationToken = cancellationToken,
-                DecompressionMethod = CompressionMethod.None
+                DecompressionMethod = CompressionMethods.None
 
             }).ConfigureAwait(false))
             {
@@ -103,11 +103,11 @@ namespace Jellyfin.Plugin.Lastfm.Providers
             if (data.bio != null)
             {
                 Int32.TryParse(data.bio.yearformed, out yearFormed);
-                if (!artist.LockedFields.Contains(MetadataFields.Overview))
+                if (!artist.LockedFields.Contains(MetadataField.Overview))
                 {
                     artist.Overview = (data.bio.content ?? string.Empty).StripHtml();
                 }
-                if (!string.IsNullOrEmpty(data.bio.placeformed) && !artist.LockedFields.Contains(MetadataFields.ProductionLocations))
+                if (!string.IsNullOrEmpty(data.bio.placeformed) && !artist.LockedFields.Contains(MetadataField.ProductionLocations))
                 {
                     artist.ProductionLocations = new[] { data.bio.placeformed };
                 }

@@ -145,7 +145,7 @@
             // User doesn't want to scrobble
             if (!lastfmUser.Options.Scrobble)
             {
-                _logger.LogDebug("{0} ({1}) does not want to scrobble", user.Name, lastfmUser.Username);
+                _logger.LogDebug("{0} ({1}) does not want to scrobble", user.Username, lastfmUser.Username);
                 return;
             }
 
@@ -188,7 +188,7 @@
             // User doesn't want to scrobble
             if (!lastfmUser.Options.Scrobble)
             {
-                _logger.LogDebug("{0} ({1}) does not want to scrobble", user.Name, lastfmUser.Username);
+                _logger.LogDebug("{0} ({1}) does not want to scrobble", user.Username, lastfmUser.Username);
                 return;
             }
 

@@ -55,8 +55,8 @@ namespace Jellyfin.Plugin.Lastfm.Providers
             RemoteImageInfo info = null;
 
             var musicBrainzId = item is MusicAlbum ?
-                item.GetProviderId(MetadataProviders.MusicBrainzAlbum) :
-                item.GetProviderId(MetadataProviders.MusicBrainzArtist);
+                item.GetProviderId(MetadataProvider.MusicBrainzAlbum) :
+                item.GetProviderId(MetadataProvider.MusicBrainzArtist);
 
             if (!string.IsNullOrEmpty(musicBrainzId))
             {
@@ -78,7 +78,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
 
             if (info ==  null)
             {
-                var musicBrainzReleaseGroupId = item.GetProviderId(MetadataProviders.MusicBrainzReleaseGroup);
+                var musicBrainzReleaseGroupId = item.GetProviderId(MetadataProvider.MusicBrainzReleaseGroup);
 
                 if (!string.IsNullOrEmpty(musicBrainzReleaseGroupId))
                 {

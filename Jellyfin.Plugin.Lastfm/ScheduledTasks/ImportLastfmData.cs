@@ -1,6 +1,7 @@
 ﻿namespace Jellyfin.Plugin.Lastfm.ScheduledTasks
 {
     using Api;
+    using Jellyfin.Data.Entities;
     using MediaBrowser.Common.Net;
     using MediaBrowser.Model.Tasks;
     using MediaBrowser.Controller.Entities;
@@ -121,7 +122,7 @@
 
             if (usersTracks.Count == 0)
             {
-                _logger.LogInformation("User {0} has no tracks in last.fm", user.Name);
+                _logger.LogInformation("User {0} has no tracks in last.fm", user.Username);
                 return;
             }
 
@@ -144,7 +145,7 @@
 
                 if (artistTracks == null || !artistTracks.Any())
                 {
-                    _logger.LogInformation("{0} has no tracks in last.fm library for {1}", user.Name, artist.Name);
+                    _logger.LogInformation("{0} has no tracks in last.fm library for {1}", user.Username, artist.Name);
                     continue;
                 }
 
@@ -203,7 +204,7 @@
 
             //The percentage might not actually be correct but I'm pretty tired and don't want to think about it
             _logger.LogInformation("Finished import Last.fm library for {0}. Local Songs: {1} | Last.fm Songs: {2} | Matched Songs: {3} | {4}% match rate",
-                user.Name, totalSongs, usersTracks.Count, matchedSongs, Math.Round(((double)matchedSongs / Math.Min(usersTracks.Count, totalSongs)) * 100));
+                user.Username, totalSongs, usersTracks.Count, matchedSongs, Math.Round(((double)matchedSongs / Math.Min(usersTracks.Count, totalSongs)) * 100));
         }
 
         private async Task<List<LastfmTrack>> GetUsersLibrary(LastfmUser lastfmUser, IProgress<double> progress, CancellationToken cancellationToken, double maxProgress, double progressOffset)

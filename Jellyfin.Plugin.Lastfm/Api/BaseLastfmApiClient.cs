@@ -47,7 +47,7 @@
             {
                 Url = BuildPostUrl(request.Secure),
                 CancellationToken = CancellationToken.None,
-                DecompressionMethod = CompressionMethod.None,
+                DecompressionMethod = CompressionMethods.None,
                 LogErrorResponseBody = true,
             };
 
@@ -87,7 +87,8 @@
             {
                 Url = BuildGetUrl(request.ToDictionary(), request.Secure),
                 CancellationToken = cancellationToken,
-                DecompressionMethod = CompressionMethod.None
+                DecompressionMethod = CompressionMethods.None
+
             }))
             {
                 try
