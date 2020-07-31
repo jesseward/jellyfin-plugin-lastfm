@@ -1,0 +1,59 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - '*'
+jobs:
+  build:
+    name: Publish binaries
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: olegtarasov/get-tag@v2
+      id: tagName
+
+    - uses: actions/checkout@v2
+ 
+    - name: Checkout manifest build scripts repo.
+      uses: actions/checkout@v2
+      with:
+        repository: jesseward/jellyfin-utilities
+        path: manifest-tools
+
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.1.x' # SDK Version to use; x will use the latest version of the 3.1 channel
+    
+    - name: Build release via dotnet build...
+      run: dotnet build Jellyfin.Plugin.Lastfm
+  
+    - name: Create ZIP archive of plugin release.
+      run: zip "lastfm_${GIT_TAG_NAME}.zip" Jellyfin.Plugin.Lastfm/bin/Debug/netstandard2.1/Jellyfin.Plugin.Lastfm.dll
+    
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.7'
+    
+    - name: Fetch existing manifest from repo.
+      run: curl -o manifest.json "https://jellyfinplugin.azurefd.net/manifest.json"
+    
+    - name: Update manifest with new version.
+      run: CK=$(python manifest-tools/md5/md5.py -f "lastfm_${GIT_TAG_NAME}.zip") && python manifest-tools/manifest-generator/manifest.py -app LastFM -f manifest.json version -ver "${GIT_TAG_NAME}" -cl "Jellyfin LastFM build v${GIT_TAG_NAME}" -abi "10.6.0.0" -url "https://github.com/jesseward/jellyfin-plugin-lastfm/releases/download/${GIT_TAG_NAME}/lastfm_${GIT_TAG_NAME}.zip" -ck "${CK}" && cat manifest.json
+    
+    - name: Create github release and upload binaries.
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: "lastfm_${{ steps.tagName.outputs.tag }}.zip"
+        asset_name: "lastfm_${{ steps.tagName.outputs.tag }}.zip"
+        tag: ${{ github.ref }}
+        overwrite: true
+        body: "Jellyfin lastfm plugin release v${{ steps.tagName.outputs.tag }}"
+
+    - name: Upload manifest.json to remote Azure blob store.
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.0.72
+        inlineScript: |
+          az storage blob upload -f manifest.json -n manifest.json --container-name jellyfinpluginrepo --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}"
