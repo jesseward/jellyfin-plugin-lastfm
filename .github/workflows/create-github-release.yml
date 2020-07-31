@@ -36,7 +36,7 @@ jobs:
         python-version: '3.7'
     
     - name: Fetch existing manifest from repo.
-      run: curl -o manifest.json "https://jellyfinplugin.azurefd.net/manifest.json"
+      run: curl -o manifest.json "https://jellyfin.jesseward.com/manifest.json"
     
     - name: Update manifest with new version.
       run: CK=$(python manifest-tools/md5/md5.py -f "lastfm_${GIT_TAG_NAME}.zip") && python manifest-tools/manifest-generator/manifest.py -app LastFM -f manifest.json version -ver "${GIT_TAG_NAME}" -cl "Jellyfin LastFM build v${GIT_TAG_NAME}" -abi "10.6.0.0" -url "https://github.com/jesseward/jellyfin-plugin-lastfm/releases/download/${GIT_TAG_NAME}/lastfm_${GIT_TAG_NAME}.zip" -ck "${CK}" && cat manifest.json
