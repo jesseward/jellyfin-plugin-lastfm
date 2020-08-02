@@ -182,17 +182,19 @@
             return await LoveTrack(item, user, false);
         }
 
-        public async Task<LovedTracksResponse> GetLovedTracks(LastfmUser user)
+        public async Task<LovedTracksResponse> GetLovedTracks(LastfmUser user, CancellationToken cancellationToken, int page)
         {
             var request = new GetLovedTracksRequest
             {
                 User = user.Username,
                 ApiKey = Strings.Keys.LastfmApiKey,
                 Method = Strings.Methods.GetLovedTracks,
+                Limit = 1000, // {"error":6,"message":"limit param out of bounds (1-1000)"}
+                Page = page,
                 Secure = true
             };
 
-            return await Get<GetLovedTracksRequest, LovedTracksResponse>(request);
+            return await Get<GetLovedTracksRequest, LovedTracksResponse>(request, cancellationToken);
         }
 
         public async Task<GetTracksResponse> GetTracks(LastfmUser user, MusicArtist artist, CancellationToken cancellationToken)

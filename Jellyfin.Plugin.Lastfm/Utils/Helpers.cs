@@ -84,7 +84,7 @@
             return null;
         }
 
-        public static LastfmTrack FindMatchedLastfmSong(List<LastfmTrack> tracks, Audio song)
+        public static LastfmLovedTrack FindMatchedLastfmSong(List<LastfmLovedTrack> tracks, Audio song)
         {
             return tracks.FirstOrDefault(lastfmTrack => StringHelper.IsLike(song.Name, lastfmTrack.Name));
         }

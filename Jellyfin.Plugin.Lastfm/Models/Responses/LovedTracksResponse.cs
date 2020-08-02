@@ -6,7 +6,7 @@
     [DataContract]
     public class LovedTracksResponse : BaseResponse
     {
-        [DataMember(Name="lovedtracks")]
+        [DataMember(Name = "lovedtracks")]
         public LovedTracks LovedTracks { get; set; }
 
         public bool HasLovedTracks()
@@ -20,5 +20,28 @@
     {
         [DataMember(Name = "track")]
         public List<LastfmLovedTrack> Tracks { get; set; }
+
+
+        [DataMember(Name = "@attr")]
+        public LovedTracksMeta Metadata { get; set; }
+    }
+
+
+    [DataContract]
+    public class LovedTracksMeta
+    {
+        [DataMember(Name = "totalPages")]
+        public int TotalPages { get; set; }
+
+        [DataMember(Name = "total")]
+        public int TotalTracks { get; set; }
+
+        [DataMember(Name = "page")]
+        public int Page { get; set; }
+
+        public bool IsLastPage()
+        {
+            return Page.Equals(TotalPages);
+        }
     }
 }
