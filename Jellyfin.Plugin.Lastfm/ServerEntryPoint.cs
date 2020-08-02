@@ -1,7 +1,6 @@
 ﻿namespace Jellyfin.Plugin.Lastfm
 {
     using Api;
-    using Configuration;
     using MediaBrowser.Common.Net;
     using MediaBrowser.Controller.Entities.Audio;
     using MediaBrowser.Controller.Library;
@@ -9,7 +8,6 @@
     using MediaBrowser.Controller.Session;
     using MediaBrowser.Model.Entities;
     using MediaBrowser.Model.Serialization;
-    using MediaBrowser.Model.Tasks;
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.Extensions.Logging;
