@@ -120,20 +120,6 @@ namespace Jellyfin.Plugin.Lastfm.Providers
                 artist.ProductionYear = yearFormed;
             }
 
-            var url = LastfmHelper.GetImageUrl(data, out string imageSize);
-
-            if (!string.IsNullOrEmpty(musicBrainzId) && !string.IsNullOrEmpty(url))
-            {
-                try
-                {
-                    LastfmHelper.SaveImageInfo(_config.ApplicationPaths, musicBrainzId, url, imageSize);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError("Failed to save image information {0}", e);
-                }
-
-            }
         }
 
         /// <summary>
