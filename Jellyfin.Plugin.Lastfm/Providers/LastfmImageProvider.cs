@@ -30,14 +30,17 @@ namespace Jellyfin.Plugin.Lastfm.Providers
             get { return ProviderName; }
         }
 
-        public static string ProviderName
-        {
-            get { return "last.fm"; }
-        }
+        public static string ProviderName => "last.fm";
 
+        /// <summary>
+        /// Support for Album art only. Last.FM removed support for artist image fetching.
+        /// https://github.com/jesseward/jellyfin-plugin-lastfm/issues/25
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public bool Supports(BaseItem item)
         {
-            return item is MusicAlbum || item is MusicArtist;
+            return item is MusicAlbum;
         }
 
         public IEnumerable<ImageType> GetSupportedImages(BaseItem item)
@@ -54,9 +57,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
 
             RemoteImageInfo info = null;
 
-            var musicBrainzId = item is MusicAlbum ?
-                item.GetProviderId(MetadataProvider.MusicBrainzAlbum) :
-                item.GetProviderId(MetadataProvider.MusicBrainzArtist);
+            string musicBrainzId = item.GetProviderId(MetadataProvider.MusicBrainzAlbum);
 
             if (!string.IsNullOrEmpty(musicBrainzId))
             {
