@@ -7,7 +7,7 @@ This plug-in was migrated from the original Emby repository and has been adapted
 # Repo Install
 Jellyfin 10.6.0 introduces 3rd party plugin repositories (see: [announcement](https://jellyfin.org/posts/plugin-updates/)), configure the following to follow stable builds for this plugin
 * Repo name: LastFM Stable
-* Repo URL: https://jellyfin.jesseward.com/manifest.json
+* Repo URL: https://jellyfin-repo.jesseward.com/manifest.json
 
 # Build
 
