@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: olegtarasov/get-tag@v2
+    - uses: little-core-labs/get-git-tag@v3.0.1
       id: tagName
 
     - uses: actions/checkout@v2
