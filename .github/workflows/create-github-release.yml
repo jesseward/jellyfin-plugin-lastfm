@@ -56,4 +56,4 @@ jobs:
       with:
         azcliversion: 2.0.72
         inlineScript: |
-          az storage blob upload -f manifest.json -n manifest.json --container-name jellyfinpluginrepo --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}"
+          az storage blob upload -f manifest.json -n manifest.json --container-name "${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}" --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}"
