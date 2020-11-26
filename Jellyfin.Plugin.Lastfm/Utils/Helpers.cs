@@ -35,7 +35,7 @@
 
         public static int ToTimestamp(DateTime date)
         {
-            return Convert.ToInt32((date - new DateTime(1970, 1, 1).ToLocalTime()).TotalSeconds);
+            return Convert.ToInt32((date - new DateTime(1970, 1, 1)).TotalSeconds);
         }
 
         public static DateTime FromTimestamp(double timestamp)
@@ -47,7 +47,7 @@
 
         public static int CurrentTimestamp()
         {
-            return ToTimestamp(DateTime.Now);
+            return ToTimestamp(DateTime.UtcNow);
         }
 
         public static string DictionaryToQueryString(Dictionary<string, string> data)

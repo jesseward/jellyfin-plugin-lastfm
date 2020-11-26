@@ -47,6 +47,7 @@
 
         public async Task Scrobble(Audio item, LastfmUser user)
         {
+            // API docs -> https://www.last.fm/api/show/track.scrobble
             var request = new ScrobbleRequest
             {
                 Track = item.Name,
