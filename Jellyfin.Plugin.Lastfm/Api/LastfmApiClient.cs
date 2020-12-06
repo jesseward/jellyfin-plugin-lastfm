@@ -1,6 +1,5 @@
 ﻿namespace Jellyfin.Plugin.Lastfm.Api
 {
-    using MediaBrowser.Common.Net;
     using MediaBrowser.Controller.Entities.Audio;
     using MediaBrowser.Model.Serialization;
     using Models;
@@ -9,6 +8,7 @@
     using Resources;
     using System;
     using System.Linq;
+    using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
     using Utils;
@@ -19,7 +19,7 @@
         private readonly ILogger _logger;
 
 
-        public LastfmApiClient(IHttpClient httpClient, IJsonSerializer jsonSerializer, ILogger logger) : base(httpClient, jsonSerializer, logger)
+        public LastfmApiClient(IHttpClientFactory httpClientFactory, IJsonSerializer jsonSerializer, ILogger logger) : base(httpClientFactory, jsonSerializer, logger)
         {
             _logger = logger;
         }

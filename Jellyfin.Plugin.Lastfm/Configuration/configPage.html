@@ -9,50 +9,48 @@
         <div data-role="content">
             <div class="content-primary">
                 <form id="LastfmScrobblerConfigurationForm">
-                        <div class="selectContainer">
-                            <select is="emby-select" id="user" name="user" label="Configure Last.fm for:"></select>
-                        </div>
-                        <div class="inputContainer">
-                            <input is="emby-input" id="username" name="username" type="text" label="Username:" />
-                        </div>
-                        <div class="inputContainer">
-                            <input is="emby-input" id="password" name="password" type="text" label="Password:" />
-                        </div>
-                        <div class="checkboxContainer">
-                            <label>
-                                <input is="emby-checkbox" type="checkbox" id="optionScrobble" name="optionScrobble" />
-                                <span>Enable Scrobbling for this user?</span>
-                            </label>
-                        </div>
-                        <div class="checkboxContainer">
-                            <label>
-                                <input is="emby-checkbox" type="checkbox" id="optionFavourite" name="optionFavourite" />
-                                <span>Sync favourites for this user?</span>
-                            </label>
-                        </div>
-                        <div>
-                            <button is="emby-button" type="submit" class="raised button-submit block"><span>${ButtonSave}</span></button>
-                        </div>
+                    <div class="selectContainer">
+                        <select is="emby-select" id="user" name="user" label="Configure Last.fm for:"></select>
+                    </div>
+                    <div class="inputContainer">
+                        <input is="emby-input" id="username" name="username" type="text" label="Username:" />
+                    </div>
+                    <div class="inputContainer">
+                        <input is="emby-input" id="password" name="password" type="text" label="Password:" />
+                    </div>
+                    <div class="checkboxContainer">
+                        <label>
+                            <input is="emby-checkbox" type="checkbox" id="optionScrobble" name="optionScrobble" />
+                            <span>Enable Scrobbling for this user?</span>
+                        </label>
+                    </div>
+                    <div class="checkboxContainer">
+                        <label>
+                            <input is="emby-checkbox" type="checkbox" id="optionFavourite" name="optionFavourite" />
+                            <span>Sync favourites for this user?</span>
+                        </label>
+                    </div>
+                    <div>
+                        <button is="emby-button" type="submit" class="raised button-submit block"><span>Save</span></button>
+                    </div>
                 </form>
             </div>
         </div>
 
-        <script type="text/javascript">
-
-            var LastfmScrobblerConfigurationPage = {
+        <script type="text/javascript">var LastfmScrobblerConfigurationPage = {
                 _pluginUniqueId: "de7fe7f0-b048-439e-a431-b1a7e99c930d",
-                _users:  [],
+                _users: [],
                 _config: [],
 
                 _currentUserId: '',
                 _currentUserConfig: null,
 
                 configDefaults: {
-                    Username:           '',
-                    SessionKey:         '',
+                    Username: '',
+                    SessionKey: '',
                     MediaBrowserUserId: '',
                     Options: {
-                        Scrobble:       false,
+                        Scrobble: false,
                         SyncFavourites: false
                     }
                 },
@@ -66,10 +64,9 @@
 
                     this.$el.find('#LastfmScrobblerConfigurationForm').on('submit', this, this.onSubmit);
                     this.$el.find('#user').on('change', this, $.proxy(this.onUserChange, this));
-                    this.$el.find("#removeUser").on('click', $.proxy(this.removeUser, this));
 
                     var loadConfig = this.loadConfiguration();
-                    var loadUsers  = this.loadUsers().then($.proxy(this.buildUserList, this));
+                    var loadUsers = this.loadUsers().then($.proxy(this.buildUserList, this));
 
                     //When we load everything, set the current user
                     $.when(loadConfig, loadUsers).then($.proxy(function () {
@@ -92,21 +89,19 @@
                     }, this));
                 },
 
-                saveConfiguration: function() {
+                saveConfiguration: function () {
                     return ApiClient.updatePluginConfiguration(this._pluginUniqueId, this._config);
                 },
 
                 buildUserList: function () {
-                    var $selectEl = this.$el.find('#user');
-                    var html = '';
 
+                    var html = '';
                     $.each(this._users, function (i, user) {
                         html += "<option value='" + user.Id + "'>" + user.Name + "</option>";
                     });
 
-                    $selectEl
-                        .html(html)
-                        .selectmenu("refresh");
+                    document.getElementById('user').innerHTML = html;
+
                 },
 
                 populateInputs: function (userData) {
@@ -114,9 +109,9 @@
 
                     this.$el.find('#username').val(data.Username);
                     this.$el.find('#password').val(data.SessionKey);
-                    this.$el.find('#optionScrobble') .prop('checked', data.Options.Scrobble)      .checkboxradio('refresh');
-                    this.$el.find('#optionFavourite').prop('checked', data.Options.SyncFavourites).checkboxradio('refresh');
-                    
+                    this.$el.find('#optionScrobble').prop('checked', data.Options.Scrobble);
+                    this.$el.find('#optionFavourite').prop('checked', data.Options.SyncFavourites);
+
                     //Dont forget to call checkboxradio('refresh') otherwise the UI wont update
                 },
 
@@ -130,9 +125,8 @@
                         this._config.LastfmUsers.push(userConfig);
                     }
 
-                    //Attach current option settings to 
+                    //Attach current option settings to
                     userConfig.Options = this.getUIOptionsValues();
-
 
                     Dashboard.showLoadingMsg();
 
@@ -146,12 +140,11 @@
 
                     //Get session with user data
                     ApiClient.LastfmGetMobileSession(username, password).then($.proxy(function (data) {
-
                         //Check if we have data
-                        if (data && data.session) {
+                        if (data && data.Session) {
 
-                            userConfig.Username   = data.session.name;
-                            userConfig.SessionKey = data.session.key;
+                            userConfig.Username = data.Session.Name;
+                            userConfig.SessionKey = data.Session.Key;
 
                             //Save
                             this.doSave();
@@ -159,9 +152,10 @@
                             return;
                         }
 
-                        //Show error
                         Dashboard.showError(data.message || "Something went wrong");
+                        console.log(data.Message);
                     }, this));
+                    Dashboard.hideLoadingMsg();
                 },
 
                 doSave: function () {
@@ -187,7 +181,7 @@
                     return currentUser;
                 },
 
-                getSelectedMBUser: function() {
+                getSelectedMBUser: function () {
                     //Get the current user
                     var currentUserId = this.getCurrentSelectedUserId();
 
@@ -199,12 +193,12 @@
                 },
 
                 //Will return an options object with the current UI settings
+
                 getUIOptionsValues: function () {
                     var options = $.extend({}, this.configDefaults.Options);
 
-                    options.Scrobble       = this.$el.find('#optionScrobble') .checked();
-                    options.SyncFavourites = this.$el.find('#optionFavourite').checked();
-
+                    options.Scrobble = this.$el.find('#optionScrobble').prop('checked');
+                    options.SyncFavourites = this.$el.find('#optionFavourite').prop('checked');
                     return options;
                 },
 
@@ -228,37 +222,6 @@
                     });
                 },
 
-                removeUser: function (e) {
-                    e.preventDefault();
-
-                    var _this = this,
-                        currentUserId = this.getCurrentSelectedUserId(),
-                        selectedMBUser = this.getSelectedMBUser();
-
-                    if (!currentUserId || !selectedMBUser) {
-                        Dashboard.showError("Please select a user");
-                        return;
-                    }
-
-                    if (!confirm("Are you sure you want to remove the last.fm configuration for " + selectedMBUser.Name + "?")) return;
-
-                    Dashboard.showLoadingMsg();
-
-                    this.loadConfiguration().then($.proxy(function () {
-
-                        //Remove the config for the current user
-                        this._config.LastfmUsers = $.grep(this._config.LastfmUsers, function(user) {
-                            return user.MediaBrowserUserId != currentUserId;
-                        });
-
-                        //Save the result
-                        this.saveConfiguration().then(function () {
-                            Dashboard.processPluginConfigurationUpdateResult();
-
-                            _this.onUserChange();
-                        });
-                    }, this));
-                }
             };
 
             $('#LastfmScrobblerConfigurationPage').on('pageshow', function () {
@@ -285,8 +248,7 @@
                     contentType: "application/json",
                     dataType: 'json'
                 });
-            };
-        </script>
+            };</script>
     </div>
 </body>
 </html>
