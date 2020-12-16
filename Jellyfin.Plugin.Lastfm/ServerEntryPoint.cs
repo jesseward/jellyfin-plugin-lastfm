@@ -10,6 +10,7 @@
     using MediaBrowser.Model.Serialization;
     using System.Linq;
     using System.Threading.Tasks;
+    using System;
     using Microsoft.Extensions.Logging;
 
     /// <summary>
@@ -17,6 +18,14 @@
     /// </summary>
     public class ServerEntryPoint : IServerEntryPoint
     {
+
+        // if the length of the song is >= 30 seconds, allow scrobble.
+        private const long minimumSongLengthToScrobbleInTicks = 30*TimeSpan.TicksPerSecond;
+        // if a song reaches >= 4 minutes  in playtime, allow scrobble.
+        private const long minimumPlayTimeToScrobbleInTicks = 4*TimeSpan.TicksPerMinute;
+        // if a song reaches >= 50% played, allow scrobble.
+        private const double minimumPlayPercentage = 50.00;
+
         private readonly ISessionManager _sessionManager;
         private readonly IUserDataManager _userDataManager;
 
@@ -106,24 +115,28 @@
 
             var item = e.Item as Audio;
 
-            // Make sure the track has been fully played
-            if (!e.PlayedToCompletion)
-            {
-                return;
-            }
-
-            // Played to completion will sometimes be true even if the track has only played 10% so check the playback ourselfs (it must use the app settings or something)
-            // Make sure 80% of the track has been played back
             if (e.PlaybackPositionTicks == null)
             {
                 _logger.LogDebug("Playback ticks for {0} is null", item.Name);
                 return;
             }
 
-            var playPercent = ((double)e.PlaybackPositionTicks / item.RunTimeTicks) * 100;
-            if (playPercent < 80)
+            // Required checkpoints before scrobbling noted at https://www.last.fm/api/scrobbling#when-is-a-scrobble-a-scrobble .
+            // A track should only be scrobbled when the following conditions have been met:
+            //   * The track must be longer than 30 seconds.
+            //   * And the track has been played for at least half its duration, or for 4 minutes (whichever occurs earlier.)
+            // is the track length greater than 30 seconds.
+            if (item.RunTimeTicks < minimumSongLengthToScrobbleInTicks)
             {
-                _logger.LogDebug("'{0}' only played {1}%, not scrobbling", item.Name, playPercent);
+                _logger.LogDebug("{0} - played {1} ticks which is less minimumSongLengthToScrobbleInTicks ({2}), won't scrobble.", item.Name, item.RunTimeTicks, minimumSongLengthToScrobbleInTicks);
+                return;
+            }
+
+            // the track must have played the minimum percentage (minimumPlayPercentage = 50%) or played for atleast 4 minutes (minimumPlayTimeToScrobbleInTicks).
+            var playPercent = ((double)e.PlaybackPositionTicks / item.RunTimeTicks) * 100;
+            if (playPercent < minimumPlayPercentage & e.PlaybackPositionTicks < minimumPlayTimeToScrobbleInTicks)
+            {
+               _logger.LogDebug("{0} - played {1}%, Last.Fm requires minplayed={2}% . played {3} ticks of minimumPlayTimeToScrobbleInTicks ({4}), won't scrobble", item.Name, playPercent, minimumPlayPercentage, e.PlaybackPositionTicks, minimumPlayTimeToScrobbleInTicks);
                 return;
             }
 
