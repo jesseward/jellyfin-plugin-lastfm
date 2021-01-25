@@ -31,7 +31,9 @@
                         </label>
                     </div>
                     <div>
-                        <button is="emby-button" type="submit" class="raised button-submit block"><span>Save</span></button>
+                        <button is="emby-button" type="submit" class="raised button-submit block emby-button">
+                            <span>Save</span>
+                        </button>
                     </div>
                 </form>
             </div>
@@ -152,7 +154,7 @@
                             return;
                         }
 
-                        Dashboard.showError(data.message || "Something went wrong");
+                        Dashboard.alert(data.Message || "Something went wrong");
                         console.log(data.Message);
                     }, this));
                     Dashboard.hideLoadingMsg();

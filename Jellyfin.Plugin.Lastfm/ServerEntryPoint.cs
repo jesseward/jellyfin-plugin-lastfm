@@ -41,7 +41,6 @@
             _sessionManager = sessionManager;
             _userDataManager = userDataManager;
             _apiClient = new LastfmApiClient(httpClientFactory, jsonSerializer, _logger);
-
             Instance = this;
         }
 
