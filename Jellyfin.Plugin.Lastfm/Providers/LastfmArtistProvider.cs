@@ -1,5 +1,4 @@
 ﻿using MediaBrowser.Common.Extensions;
-using MediaBrowser.Common.Net;
 using MediaBrowser.Controller.Configuration;
 using MediaBrowser.Controller.Entities.Audio;
 using MediaBrowser.Controller.Providers;
@@ -10,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
@@ -21,7 +21,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
     public class LastfmArtistProvider : IRemoteMetadataProvider<MusicArtist, ArtistInfo>, IHasOrder
     {
         private readonly IJsonSerializer _json;
-        private readonly IHttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
 
         internal const string RootUrl = @"http://ws.audioscrobbler.com/2.0/?";
         internal static string ApiKey = "7b76553c3eb1d341d642755aecc40a33";
@@ -30,9 +30,9 @@ namespace Jellyfin.Plugin.Lastfm.Providers
         private readonly ILoggerFactory _loggerFactory;
         private readonly ILogger<LastfmArtistProvider> _logger;
 
-        public LastfmArtistProvider(IHttpClient httpClient, IJsonSerializer json, IServerConfigurationManager config, ILoggerFactory loggerFactory)
+        public LastfmArtistProvider(IHttpClientFactory httpClientFactory, IJsonSerializer json, IServerConfigurationManager config, ILoggerFactory loggerFactory)
         {
-            _httpClient = httpClient;
+            _httpClientFactory = httpClientFactory;
             _json = json;
             _config = config;
             _loggerFactory = loggerFactory;
@@ -70,22 +70,19 @@ namespace Jellyfin.Plugin.Lastfm.Providers
 
             LastfmGetArtistResult result;
 
-            using (var json = await _httpClient.Get(new HttpRequestOptions
+            using (var response = await _httpClientFactory.CreateClient().GetAsync(url, cancellationToken).ConfigureAwait(false))
             {
-                Url = url,
-                CancellationToken = cancellationToken,
-                DecompressionMethod = CompressionMethods.None
-
-            }).ConfigureAwait(false))
-            {
-                using (var reader = new StreamReader(json))
+                using (var stream = await response.Content.ReadAsStreamAsync())
                 {
-                    var jsonText = await reader.ReadToEndAsync().ConfigureAwait(false);
+                    using (var reader = new StreamReader(stream))
+                    {
+                        var jsonText = await reader.ReadToEndAsync().ConfigureAwait(false);
 
-                    // Fix their bad json
-                    jsonText = jsonText.Replace("\"#text\"", "\"url\"");
+                        // Fix their bad json
+                        jsonText = jsonText.Replace("\"#text\"", "\"url\"");
 
-                    result = _json.DeserializeFromString<LastfmGetArtistResult>(jsonText);
+                        result = _json.DeserializeFromString<LastfmGetArtistResult>(jsonText);
+                    }
                 }
             }
 
@@ -145,7 +142,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
             }
         }
 
-        public Task<HttpResponseInfo> GetImageResponse(string url, CancellationToken cancellationToken)
+        public Task<HttpResponseMessage> GetImageResponse(string url, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

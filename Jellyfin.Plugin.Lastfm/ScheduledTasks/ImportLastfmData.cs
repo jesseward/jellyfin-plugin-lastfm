@@ -2,7 +2,6 @@
 {
     using Api;
     using Jellyfin.Data.Entities;
-    using MediaBrowser.Common.Net;
     using MediaBrowser.Model.Tasks;
     using MediaBrowser.Controller.Entities;
     using MediaBrowser.Controller.Entities.Audio;
@@ -13,6 +12,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
     using Utils;
@@ -29,13 +29,13 @@
         private readonly ILogger<ImportLastfmData> _logger;
         private readonly LastfmApiClient _apiClient;
 
-        public ImportLastfmData(IHttpClient httpClient, IJsonSerializer jsonSerializer, IUserManager userManager, IUserDataManager userDataManager, ILibraryManager libraryManager, ILoggerFactory loggerFactory)
+        public ImportLastfmData(IHttpClientFactory httpClientFactory, IJsonSerializer jsonSerializer, IUserManager userManager, IUserDataManager userDataManager, ILibraryManager libraryManager, ILoggerFactory loggerFactory)
         {
             _userManager = userManager;
             _userDataManager = userDataManager;
             _libraryManager = libraryManager;
             _logger = loggerFactory.CreateLogger<ImportLastfmData>();
-            _apiClient = new LastfmApiClient(httpClient, jsonSerializer, loggerFactory.CreateLogger<ImportLastfmData>());
+            _apiClient = new LastfmApiClient(httpClientFactory, jsonSerializer, loggerFactory.CreateLogger<ImportLastfmData>());
         }
 
         public string Name => "Import Last.fm Loved Tracks";

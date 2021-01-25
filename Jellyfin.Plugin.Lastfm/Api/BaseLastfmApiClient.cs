@@ -1,6 +1,5 @@
 ﻿namespace Jellyfin.Plugin.Lastfm.Api
 {
-    using MediaBrowser.Common.Net;
     using MediaBrowser.Model.Serialization;
     using Models.Requests;
     using Models.Responses;
@@ -8,6 +7,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net.Http;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using Utils;
@@ -17,14 +18,16 @@
     {
         private const string ApiVersion = "2.0";
 
-        private readonly IHttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly IJsonSerializer _jsonSerializer;
+        private readonly HttpClient _httpClient;
         private readonly ILogger _logger;
 
 
-        public BaseLastfmApiClient(IHttpClient httpClient, IJsonSerializer jsonSerializer, ILogger logger)
+        public BaseLastfmApiClient(IHttpClientFactory httpClientFactory, IJsonSerializer jsonSerializer, ILogger logger)
         {
-            _httpClient = httpClient;
+            _httpClientFactory = httpClientFactory;
+            _httpClient = _httpClientFactory.CreateClient();
             _jsonSerializer = jsonSerializer;
             _logger = logger;
         }
@@ -43,37 +46,28 @@
             // Append the signature
             Helpers.AppendSignature(ref data);
 
-            var options = new HttpRequestOptions
-            {
-                Url = BuildPostUrl(request.Secure),
-                CancellationToken = CancellationToken.None,
-                DecompressionMethod = CompressionMethods.None,
-                LogErrorResponseBody = true,
-            };
 
-            options.RequestContentType = "application/x-www-form-urlencoded";
-            options.RequestContent = SetPostData(data);
-            using (var response = await _httpClient.Post(options))
+            using var requestMessage = new HttpRequestMessage(HttpMethod.Post, BuildPostUrl(request.Secure));
+            requestMessage.Content = new StringContent(SetPostData(data), Encoding.UTF8, "application/x-www-form-urlencoded");
+            using var response = await _httpClient.SendAsync(requestMessage, CancellationToken.None);
+            using (var stream = await response.Content.ReadAsStreamAsync())
             {
-                using (var stream = response.Content)
+                try
                 {
-                    try
-                    {
-                        var result = _jsonSerializer.DeserializeFromStream<TResponse>(stream);
-                        // Lets Log the error here to ensure all errors are logged
-                        if (result.IsError())
-                            _logger.LogError(result.Message);
+                    var result = _jsonSerializer.DeserializeFromStream<TResponse>(stream);
+                    // Lets Log the error here to ensure all errors are logged
+                    if (result.IsError())
+                        _logger.LogError(result.Message);
 
-                        return result;
-                    }
-                    catch (Exception e)
-                    {
-                        _logger.LogDebug(e.Message);
-                    }
+                    return result;
                 }
-
-                return null;
+                catch (Exception e)
+                {
+                    _logger.LogDebug(e.Message);
+                }
             }
+
+            return null;
         }
 
         public async Task<TResponse> Get<TRequest, TResponse>(TRequest request) where TRequest : BaseRequest where TResponse : BaseResponse
@@ -83,13 +77,8 @@
 
         public async Task<TResponse> Get<TRequest, TResponse>(TRequest request, CancellationToken cancellationToken) where TRequest : BaseRequest where TResponse : BaseResponse
         {
-            using (var stream = await _httpClient.Get(new HttpRequestOptions
-            {
-                Url = BuildGetUrl(request.ToDictionary(), request.Secure),
-                CancellationToken = cancellationToken,
-                DecompressionMethod = CompressionMethods.None
-
-            }))
+            using var response = await _httpClient.GetAsync(BuildGetUrl(request.ToDictionary(), request.Secure), cancellationToken);
+            using (var stream = await response.Content.ReadAsStreamAsync())
             {
                 try
                 {
