@@ -164,9 +164,9 @@
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(item.Artists.First()) || string.IsNullOrWhiteSpace(item.Name))
+            if (string.IsNullOrWhiteSpace(item.Artists.FirstOrDefault()) || string.IsNullOrWhiteSpace(item.Name))
             {
-                _logger.LogInformation("track {0} is missing  artist ({1}) or track name ({2}) metadata. Not submitting", item.Path, item.Artists.First(), item.Name);
+                _logger.LogInformation("track {0} is missing  artist ({1}) or track name ({2}) metadata. Not submitting", item.Path, item.Artists.FirstOrDefault(), item.Name);
                 return;
             }
             await _apiClient.Scrobble(item, lastfmUser).ConfigureAwait(false);
