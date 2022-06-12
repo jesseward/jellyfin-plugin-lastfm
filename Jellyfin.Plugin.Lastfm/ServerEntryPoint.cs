@@ -6,7 +6,6 @@
     using MediaBrowser.Controller.Plugins;
     using MediaBrowser.Controller.Session;
     using MediaBrowser.Model.Entities;
-    using MediaBrowser.Model.Serialization;
     using System.Linq;
     using System.Net.Http;
     using System.Threading.Tasks;
@@ -40,7 +39,6 @@
 
         public ServerEntryPoint(
             ISessionManager sessionManager,
-            IJsonSerializer jsonSerializer,
             IHttpClientFactory httpClientFactory,
             ILoggerFactory loggerFactory,
             IUserDataManager userDataManager)
@@ -49,7 +47,7 @@
 
             _sessionManager = sessionManager;
             _userDataManager = userDataManager;
-            _apiClient = new LastfmApiClient(httpClientFactory, jsonSerializer, _logger);
+            _apiClient = new LastfmApiClient(httpClientFactory, _logger);
             Instance = this;
         }
 

@@ -1,6 +1,5 @@
 ﻿namespace Jellyfin.Plugin.Lastfm.Api
 {
-    using MediaBrowser.Model.Serialization;
     using Models.Requests;
     using Models.Responses;
     using Resources;
@@ -9,6 +8,7 @@
     using System.Linq;
     using System.Net.Http;
     using System.Text;
+    using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
     using Utils;
@@ -19,16 +19,14 @@
         private const string ApiVersion = "2.0";
 
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IJsonSerializer _jsonSerializer;
         private readonly HttpClient _httpClient;
         private readonly ILogger _logger;
 
 
-        public BaseLastfmApiClient(IHttpClientFactory httpClientFactory, IJsonSerializer jsonSerializer, ILogger logger)
+        public BaseLastfmApiClient(IHttpClientFactory httpClientFactory, ILogger logger)
         {
             _httpClientFactory = httpClientFactory;
             _httpClient = _httpClientFactory.CreateClient();
-            _jsonSerializer = jsonSerializer;
             _logger = logger;
         }
 
@@ -54,7 +52,7 @@
             {
                 try
                 {
-                    var result = _jsonSerializer.DeserializeFromStream<TResponse>(stream);
+                    var result = JsonSerializer.Deserialize<TResponse>(stream);
                     // Lets Log the error here to ensure all errors are logged
                     if (result.IsError())
                         _logger.LogError(result.Message);
@@ -82,7 +80,7 @@
             {
                 try
                 {
-                    var result = _jsonSerializer.DeserializeFromStream<TResponse>(stream);
+                    var result = JsonSerializer.Deserialize<TResponse>(stream);
 
                     // Lets Log the error here to ensure all errors are logged
                     if (result.IsError())
