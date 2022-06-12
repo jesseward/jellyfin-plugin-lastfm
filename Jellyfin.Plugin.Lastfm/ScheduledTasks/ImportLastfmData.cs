@@ -2,6 +2,7 @@ namespace Jellyfin.Plugin.Lastfm.ScheduledTasks
 {
     using Api;
     using Jellyfin.Data.Entities;
+    using Jellyfin.Data.Enums;
     using MediaBrowser.Model.Tasks;
     using MediaBrowser.Controller.Entities;
     using MediaBrowser.Controller.Entities.Audio;
@@ -139,7 +140,7 @@ namespace Jellyfin.Plugin.Lastfm.ScheduledTasks
                 // Loop through each song
                 foreach (Audio song in artist.GetTaggedItems(new InternalItemsQuery(user)
                 {
-                    IncludeItemTypes = new[] { "Audio" },
+                    IncludeItemTypes = new[] { BaseItemKind.Audio },
                     EnableTotalRecordCount = false
                 }).OfType<Audio>().ToList())
                 {
