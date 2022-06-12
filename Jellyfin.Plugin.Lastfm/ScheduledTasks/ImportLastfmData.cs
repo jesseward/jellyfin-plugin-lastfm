@@ -1,4 +1,4 @@
-namespace Jellyfin.Plugin.Lastfm.ScheduledTasks
+﻿namespace Jellyfin.Plugin.Lastfm.ScheduledTasks
 {
     using Api;
     using Jellyfin.Data.Entities;
@@ -53,7 +53,7 @@ namespace Jellyfin.Plugin.Lastfm.ScheduledTasks
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <param name="progress"></param>
-        public async Task Execute(CancellationToken cancellationToken, IProgress<double> progress)
+        public async Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken)
         {
             //Get all users
             var users = _userManager.Users.Where(u =>
