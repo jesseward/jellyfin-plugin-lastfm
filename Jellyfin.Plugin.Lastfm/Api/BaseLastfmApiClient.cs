@@ -5,6 +5,7 @@
     using Resources;
     using System;
     using System.Collections.Generic;
+    using System.Net.Http.Json;
     using System.Linq;
     using System.Net.Http;
     using System.Text;
@@ -47,12 +48,11 @@
 
             using var requestMessage = new HttpRequestMessage(HttpMethod.Post, BuildPostUrl(request.Secure));
             requestMessage.Content = new StringContent(SetPostData(data), Encoding.UTF8, "application/x-www-form-urlencoded");
-            using var response = await _httpClient.SendAsync(requestMessage, CancellationToken.None);
-            using (var stream = await response.Content.ReadAsStreamAsync())
+            using (var response = await _httpClient.SendAsync(requestMessage, CancellationToken.None))
             {
                 try
                 {
-                    var result = JsonSerializer.Deserialize<TResponse>(stream);
+                    var result = await response.Content.ReadFromJsonAsync<TResponse>();
                     // Lets Log the error here to ensure all errors are logged
                     if (result.IsError())
                         _logger.LogError(result.Message);
@@ -75,12 +75,11 @@
 
         public async Task<TResponse> Get<TRequest, TResponse>(TRequest request, CancellationToken cancellationToken) where TRequest : BaseRequest where TResponse : BaseResponse
         {
-            using var response = await _httpClient.GetAsync(BuildGetUrl(request.ToDictionary(), request.Secure), cancellationToken);
-            using (var stream = await response.Content.ReadAsStreamAsync())
+            using (var response = await _httpClient.GetAsync(BuildGetUrl(request.ToDictionary(), request.Secure), cancellationToken))
             {
                 try
                 {
-                    var result = JsonSerializer.Deserialize<TResponse>(stream);
+                    var result = await response.Content.ReadFromJsonAsync<TResponse>();
 
                     // Lets Log the error here to ensure all errors are logged
                     if (result.IsError())
