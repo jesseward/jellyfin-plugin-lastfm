@@ -20,17 +20,15 @@ namespace Jellyfin.Plugin.Lastfm.Providers
 {
     public class LastfmAlbumProvider : IRemoteMetadataProvider<MusicAlbum, AlbumInfo>, IHasOrder
     {
-        private readonly IJsonSerializer _json;
         private readonly IHttpClientFactory _httpClientFactory;
 
         private readonly IServerConfigurationManager _config;
         private readonly ILoggerFactory _loggerFactory;
         private readonly ILogger<LastfmAlbumProvider> _logger;
 
-        public LastfmAlbumProvider(IHttpClientFactory httpClientFactory, IJsonSerializer json, IServerConfigurationManager config, ILoggerFactory loggerFactory)
+        public LastfmAlbumProvider(IHttpClientFactory httpClientFactory, IServerConfigurationManager config, ILoggerFactory loggerFactory)
         {
             _httpClientFactory = httpClientFactory;
-            _json = json;
             _config = config;
             _loggerFactory = loggerFactory;
             _logger = _loggerFactory.CreateLogger<LastfmAlbumProvider>();
@@ -124,7 +122,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
                         // Fix their bad json
                         jsonText = jsonText.Replace("\"#text\"", "\"url\"");
 
-                        return _json.DeserializeFromString<LastfmGetAlbumResult>(jsonText);
+                        return JsonSerializer.DeserializeFromString<LastfmGetAlbumResult>(jsonText);
                     }
                 }
             }
@@ -146,7 +144,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
                         // Fix their bad json
                         jsonText = jsonText.Replace("\"#text\"", "\"url\"");
 
-                        return _json.DeserializeFromString<LastfmGetAlbumResult>(jsonText);
+                        return JsonSerializer.DeserializeFromString<LastfmGetAlbumResult>(jsonText);
                     }
                 }
             }

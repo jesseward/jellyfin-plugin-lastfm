@@ -19,7 +19,7 @@
         private readonly ILogger _logger;
 
 
-        public LastfmApiClient(IHttpClientFactory httpClientFactory, IJsonSerializer jsonSerializer, ILogger logger) : base(httpClientFactory, jsonSerializer, logger)
+        public LastfmApiClient(IHttpClientFactory httpClientFactory, ILogger logger) : base(httpClientFactory, logger)
         {
             _logger = logger;
         }

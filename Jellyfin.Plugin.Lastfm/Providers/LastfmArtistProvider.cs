@@ -20,7 +20,6 @@ namespace Jellyfin.Plugin.Lastfm.Providers
 {
     public class LastfmArtistProvider : IRemoteMetadataProvider<MusicArtist, ArtistInfo>, IHasOrder
     {
-        private readonly IJsonSerializer _json;
         private readonly IHttpClientFactory _httpClientFactory;
 
         internal const string RootUrl = @"http://ws.audioscrobbler.com/2.0/?";
@@ -30,10 +29,9 @@ namespace Jellyfin.Plugin.Lastfm.Providers
         private readonly ILoggerFactory _loggerFactory;
         private readonly ILogger<LastfmArtistProvider> _logger;
 
-        public LastfmArtistProvider(IHttpClientFactory httpClientFactory, IJsonSerializer json, IServerConfigurationManager config, ILoggerFactory loggerFactory)
+        public LastfmArtistProvider(IHttpClientFactory httpClientFactory, IServerConfigurationManager config, ILoggerFactory loggerFactory)
         {
             _httpClientFactory = httpClientFactory;
-            _json = json;
             _config = config;
             _loggerFactory = loggerFactory;
             _logger = loggerFactory.CreateLogger<LastfmArtistProvider>();
@@ -81,7 +79,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
                         // Fix their bad json
                         jsonText = jsonText.Replace("\"#text\"", "\"url\"");
 
-                        result = _json.DeserializeFromString<LastfmGetArtistResult>(jsonText);
+                        result = JsonSerializer.DeserializeFromString<LastfmGetArtistResult>(jsonText);
                     }
                 }
             }

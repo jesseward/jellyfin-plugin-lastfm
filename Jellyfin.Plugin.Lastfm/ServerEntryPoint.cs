@@ -40,7 +40,6 @@
 
         public ServerEntryPoint(
             ISessionManager sessionManager,
-            IJsonSerializer jsonSerializer,
             IHttpClientFactory httpClientFactory,
             ILoggerFactory loggerFactory,
             IUserDataManager userDataManager)
@@ -49,7 +48,7 @@
 
             _sessionManager = sessionManager;
             _userDataManager = userDataManager;
-            _apiClient = new LastfmApiClient(httpClientFactory, jsonSerializer, _logger);
+            _apiClient = new LastfmApiClient(httpClientFactory, _logger);
             Instance = this;
         }
 
