@@ -52,7 +52,14 @@
 
         public static string DictionaryToQueryString(Dictionary<string, string> data)
         {
-            return String.Join("&", data.Where(k => !String.IsNullOrWhiteSpace(k.Value)).Select(kvp => String.Format("{0}={1}", Uri.EscapeUriString(kvp.Key), Uri.EscapeUriString(kvp.Value))));
+            // Filter out any key-value pairs with null, empty or whitespace values
+            var nonEmptyPairs = data.Where(kvp => !string.IsNullOrWhiteSpace(kvp.Value));
+
+            // URL-encode the keys and values and join them using '&'
+            var encodedPairs = nonEmptyPairs.Select(kvp =>
+                $"{Uri.EscapeDataString(kvp.Key)}={Uri.EscapeDataString(kvp.Value)}");
+
+            return string.Join("&", encodedPairs);
         }
 
         private static string CreateSignature(Dictionary<string, string> data)
