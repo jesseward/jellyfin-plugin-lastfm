@@ -1,12 +1,11 @@
 ﻿namespace Jellyfin.Plugin.Lastfm.Models.Responses
 {
+    using System.Text.Json.Serialization;
     using System.Collections.Generic;
-    using System.Runtime.Serialization;
-
-    [DataContract]
+    
     public class GetTracksResponse : BaseResponse
     {
-        [DataMember(Name="tracks")]
+        [JsonPropertyName("tracks")]
         public GetTracksTracks Tracks { get; set; }
 
         public bool HasTracks()
@@ -15,26 +14,24 @@
         }
     }
 
-    [DataContract]
     public class GetTracksTracks
     {
-        [DataMember(Name="track")]
+        [JsonPropertyName("track")]
         public List<LastfmTrack> Tracks { get; set; }
 
-        [DataMember(Name = "@attr")]
+        [JsonPropertyName("@attr")]
         public GetTracksMeta Metadata { get; set; }
     }
 
-    [DataContract]
     public class GetTracksMeta
     {
-        [DataMember(Name = "totalPages")]
+        [JsonPropertyName("totalPages")]
         public int TotalPages { get; set; }
 
-        [DataMember(Name = "total")]
+        [JsonPropertyName("total")]
         public int TotalTracks { get; set; }
 
-        [DataMember(Name = "page")]
+        [JsonPropertyName("page")]
         public int Page { get; set; }
 
         public bool IsLastPage()

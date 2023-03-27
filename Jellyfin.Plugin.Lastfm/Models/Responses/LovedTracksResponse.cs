@@ -1,12 +1,11 @@
 ﻿namespace Jellyfin.Plugin.Lastfm.Models.Responses
 {
+    using System.Text.Json.Serialization;
     using System.Collections.Generic;
-    using System.Runtime.Serialization;
 
-    [DataContract]
     public class LovedTracksResponse : BaseResponse
     {
-        [DataMember(Name = "lovedtracks")]
+        [JsonPropertyName("lovedtracks")]
         public LovedTracks LovedTracks { get; set; }
 
         public bool HasLovedTracks()
@@ -15,28 +14,27 @@
         }
     }
 
-    [DataContract]
     public class LovedTracks
     {
-        [DataMember(Name = "track")]
+        [JsonPropertyName("track")]
         public List<LastfmLovedTrack> Tracks { get; set; }
 
-
-        [DataMember(Name = "@attr")]
+        [JsonPropertyName("@attr")]
         public LovedTracksMeta Metadata { get; set; }
     }
 
-
-    [DataContract]
     public class LovedTracksMeta
     {
-        [DataMember(Name = "totalPages")]
+        [JsonPropertyName("user")]
+        public string User { get; set; }
+
+        [JsonPropertyName("totalPages")]
         public int TotalPages { get; set; }
 
-        [DataMember(Name = "total")]
+        [JsonPropertyName("total")]
         public int TotalTracks { get; set; }
 
-        [DataMember(Name = "page")]
+        [JsonPropertyName("page")]
         public int Page { get; set; }
 
         public bool IsLastPage()

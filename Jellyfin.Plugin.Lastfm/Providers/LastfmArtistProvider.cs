@@ -4,17 +4,18 @@ using MediaBrowser.Controller.Entities.Audio;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.Providers;
-using MediaBrowser.Model.Serialization;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
 
 using Microsoft.Extensions.Logging;
+
 
 namespace Jellyfin.Plugin.Lastfm.Providers
 {
@@ -78,8 +79,10 @@ namespace Jellyfin.Plugin.Lastfm.Providers
 
                         // Fix their bad json
                         jsonText = jsonText.Replace("\"#text\"", "\"url\"");
-
-                        result = JsonSerializer.DeserializeFromString<LastfmGetArtistResult>(jsonText);
+                        
+                        var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+                        
+                        result = JsonSerializer.Deserialize<LastfmGetArtistResult>(jsonText, options);
                     }
                 }
             }

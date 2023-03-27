@@ -1,22 +1,20 @@
 ﻿namespace Jellyfin.Plugin.Lastfm.Models
 {
-    using System.Runtime.Serialization;
+    using System.Text.Json.Serialization;
 
     //Wow what a bad response object!
-    [DataContract]
     public class Scrobbles
     {
-        [DataMember(Name = "@attr")]
+        [JsonPropertyName("@attr")]
         public ScrobbleAttributes Attributes { get; set; }
     }
 
-    [DataContract]
     public class ScrobbleAttributes
     {
-        [DataMember(Name = "accepted")]
+        [JsonPropertyName("accepted")]
         public bool Accepted { get; set; }
 
-        [DataMember(Name = "ignored")]
+        [JsonPropertyName("ignored")]
         public bool Ignored { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 {
     using Api;
     using Jellyfin.Data.Entities;
+    using Jellyfin.Data.Enums;
     using MediaBrowser.Model.Tasks;
     using MediaBrowser.Controller.Entities;
     using MediaBrowser.Controller.Entities.Audio;
@@ -140,7 +141,7 @@
                 // Loop through each song
                 foreach (Audio song in artist.GetTaggedItems(new InternalItemsQuery(user)
                 {
-                    IncludeItemTypes = new[] { "Audio" },
+                    IncludeItemTypes = new[] { BaseItemKind.Audio },
                     EnableTotalRecordCount = false
                 }).OfType<Audio>().ToList())
                 {
@@ -198,6 +199,47 @@
             } while (moreTracks);
             _logger.LogInformation("Retrieved {0} lovedTracks from LastFM for user {1}", tracks.Count(), lastfmUser.Username);
             return tracks;
+        }
+
+        public async Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken)
+        {
+            //Get all users
+            var users = _userManager.Users.Where(u =>
+            {
+                var user = UserHelpers.GetUser(u);
+                return user != null && !String.IsNullOrWhiteSpace(user.SessionKey);
+            }).ToList();
+
+            if (users.Count == 0)
+            {
+                _logger.LogInformation("No users found");
+                return;
+            }
+
+            Plugin.Syncing = true;
+
+            var usersProcessed = 0;
+            var totalUsers = users.Count;
+
+            foreach (var user in users)
+            {
+                try
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    var progressOffset = ((double)usersProcessed++ / totalUsers);
+                    var maxProgressForStage = ((double)usersProcessed / totalUsers);
+
+
+                    await SyncDataforUserByArtistBulk(user, progress, cancellationToken, maxProgressForStage, progressOffset);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error syncing Last.fm data for user {UserName}", user.Username);
+                }
+            }
+
+            Plugin.Syncing = false;
         }
     }
 }

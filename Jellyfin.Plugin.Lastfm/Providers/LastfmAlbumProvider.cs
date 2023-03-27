@@ -3,18 +3,19 @@ using MediaBrowser.Controller.Entities.Audio;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.Providers;
-using MediaBrowser.Model.Serialization;
-using MoreLinq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
+
 
 namespace Jellyfin.Plugin.Lastfm.Providers
 {
@@ -108,7 +109,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
 
         private async Task<LastfmGetAlbumResult> GetAlbumResult(string artist, string album, CancellationToken cancellationToken)
         {
-            // Get albu info using artist and album name
+            // Get album info using artist and album name
             var url = LastfmArtistProvider.RootUrl + string.Format("method=album.getInfo&artist={0}&album={1}&api_key={2}&format=json", UrlEncode(artist), UrlEncode(album), LastfmArtistProvider.ApiKey);
 
             using (var response = await _httpClientFactory.CreateClient().GetAsync(url, cancellationToken).ConfigureAwait(false))
@@ -122,7 +123,9 @@ namespace Jellyfin.Plugin.Lastfm.Providers
                         // Fix their bad json
                         jsonText = jsonText.Replace("\"#text\"", "\"url\"");
 
-                        return JsonSerializer.DeserializeFromString<LastfmGetAlbumResult>(jsonText);
+                        var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+
+                        return JsonSerializer.Deserialize<LastfmGetAlbumResult>(jsonText, options);
                     }
                 }
             }
@@ -130,7 +133,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
 
         private async Task<LastfmGetAlbumResult> GetAlbumResult(string musicbraizId, CancellationToken cancellationToken)
         {
-            // Get albu info using artist and album name
+            // Get album info using MusicBrainz ID
             var url = LastfmArtistProvider.RootUrl + string.Format("method=album.getInfo&mbid={0}&api_key={1}&format=json", UrlEncode(musicbraizId), LastfmArtistProvider.ApiKey);
 
             using (var response = await _httpClientFactory.CreateClient().GetAsync(url, cancellationToken).ConfigureAwait(false))
@@ -144,7 +147,9 @@ namespace Jellyfin.Plugin.Lastfm.Providers
                         // Fix their bad json
                         jsonText = jsonText.Replace("\"#text\"", "\"url\"");
 
-                        return JsonSerializer.DeserializeFromString<LastfmGetAlbumResult>(jsonText);
+                        var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+
+                        return JsonSerializer.Deserialize<LastfmGetAlbumResult>(jsonText, options);
                     }
                 }
             }
