@@ -54,7 +54,7 @@
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <param name="progress"></param>
-        public async Task Execute(CancellationToken cancellationToken, IProgress<double> progress)
+        public async Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken)
         {
             //Get all users
             var users = _userManager.Users.Where(u =>
@@ -76,13 +76,20 @@
 
             foreach (var user in users)
             {
-                cancellationToken.ThrowIfCancellationRequested();
+                try
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                var progressOffset = ((double)usersProcessed++ / totalUsers);
-                var maxProgressForStage = ((double)usersProcessed / totalUsers);
+                    var progressOffset = ((double)usersProcessed++ / totalUsers);
+                    var maxProgressForStage = ((double)usersProcessed / totalUsers);
 
 
-                await SyncDataforUserByArtistBulk(user, progress, cancellationToken, maxProgressForStage, progressOffset);
+                    await SyncDataforUserByArtistBulk(user, progress, cancellationToken, maxProgressForStage, progressOffset);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error syncing Last.fm data for user {UserName}", user.Username);
+                }
             }
 
             Plugin.Syncing = false;
@@ -199,47 +206,6 @@
             } while (moreTracks);
             _logger.LogInformation("Retrieved {0} lovedTracks from LastFM for user {1}", tracks.Count(), lastfmUser.Username);
             return tracks;
-        }
-
-        public async Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken)
-        {
-            //Get all users
-            var users = _userManager.Users.Where(u =>
-            {
-                var user = UserHelpers.GetUser(u);
-                return user != null && !String.IsNullOrWhiteSpace(user.SessionKey);
-            }).ToList();
-
-            if (users.Count == 0)
-            {
-                _logger.LogInformation("No users found");
-                return;
-            }
-
-            Plugin.Syncing = true;
-
-            var usersProcessed = 0;
-            var totalUsers = users.Count;
-
-            foreach (var user in users)
-            {
-                try
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    var progressOffset = ((double)usersProcessed++ / totalUsers);
-                    var maxProgressForStage = ((double)usersProcessed / totalUsers);
-
-
-                    await SyncDataforUserByArtistBulk(user, progress, cancellationToken, maxProgressForStage, progressOffset);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error syncing Last.fm data for user {UserName}", user.Username);
-                }
-            }
-
-            Plugin.Syncing = false;
         }
     }
 }
