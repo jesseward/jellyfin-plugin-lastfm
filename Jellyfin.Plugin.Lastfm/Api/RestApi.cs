@@ -1,5 +1,4 @@
-﻿using MediaBrowser.Model.Serialization;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System.Net.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,10 +12,10 @@ namespace Jellyfin.Plugin.Lastfm.Api
         private readonly LastfmApiClient _apiClient;
         private readonly ILogger<RestApi> _logger;
 
-        public RestApi(IJsonSerializer jsonSerializer, IHttpClientFactory httpClientFactory, ILoggerFactory loggerFactory)
+        public RestApi(IHttpClientFactory httpClientFactory, ILoggerFactory loggerFactory)
         {
             _logger = loggerFactory.CreateLogger<RestApi>();
-            _apiClient = new LastfmApiClient(httpClientFactory, jsonSerializer, _logger);
+            _apiClient = new LastfmApiClient(httpClientFactory, _logger);
         }
 
         [HttpPost]

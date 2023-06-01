@@ -2,12 +2,12 @@
 {
     using Api;
     using Jellyfin.Data.Entities;
+    using Jellyfin.Data.Enums;
     using MediaBrowser.Model.Tasks;
     using MediaBrowser.Controller.Entities;
     using MediaBrowser.Controller.Entities.Audio;
     using MediaBrowser.Controller.Library;
     using MediaBrowser.Model.Entities;
-    using MediaBrowser.Model.Serialization;
     using Models;
     using System;
     using System.Collections.Generic;
@@ -29,13 +29,13 @@
         private readonly ILogger<ImportLastfmData> _logger;
         private readonly LastfmApiClient _apiClient;
 
-        public ImportLastfmData(IHttpClientFactory httpClientFactory, IJsonSerializer jsonSerializer, IUserManager userManager, IUserDataManager userDataManager, ILibraryManager libraryManager, ILoggerFactory loggerFactory)
+        public ImportLastfmData(IHttpClientFactory httpClientFactory, IUserManager userManager, IUserDataManager userDataManager, ILibraryManager libraryManager, ILoggerFactory loggerFactory)
         {
             _userManager = userManager;
             _userDataManager = userDataManager;
             _libraryManager = libraryManager;
             _logger = loggerFactory.CreateLogger<ImportLastfmData>();
-            _apiClient = new LastfmApiClient(httpClientFactory, jsonSerializer, loggerFactory.CreateLogger<ImportLastfmData>());
+            _apiClient = new LastfmApiClient(httpClientFactory, loggerFactory.CreateLogger<ImportLastfmData>());
         }
 
         public string Name => "Import Last.fm Loved Tracks";
@@ -53,7 +53,7 @@
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <param name="progress"></param>
-        public async Task Execute(CancellationToken cancellationToken, IProgress<double> progress)
+        public async Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken)
         {
             //Get all users
             var users = _userManager.Users.Where(u =>
@@ -140,7 +140,7 @@
                 // Loop through each song
                 foreach (Audio song in artist.GetTaggedItems(new InternalItemsQuery(user)
                 {
-                    IncludeItemTypes = new[] { "Audio" },
+                    IncludeItemTypes = new[] { BaseItemKind.Audio },
                     EnableTotalRecordCount = false
                 }).OfType<Audio>().ToList())
                 {
