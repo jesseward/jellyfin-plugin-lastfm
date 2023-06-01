@@ -166,7 +166,7 @@
             }
             catch (Exception ex)
             {
-                _logger.LogError("{0} Failed to love = {2} track '{1}'", ex, user.Username, item.Name, love);
+                _logger.LogError("{0} Failed to love = {3} track '{2}' - {1}", user.Username, ex, item.Name, love);
                 return false;
             }
         }
