@@ -1,10 +1,13 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/dotnet
 {
-	"name": "C# (.NET)",
+	"name": "jellyfin-plugin-lastfm",
+	"dockerComposeFile": "docker-compose.yaml",
+	"service": "jellyfin",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"image": "mcr.microsoft.com/devcontainers/dotnet:0-7.0",
 	"features": {
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
 		"ghcr.io/devcontainers/features/dotnet:1": {
 			"installUsingApt": true,
 			"version": "7"
@@ -16,7 +19,7 @@
 
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "dotnet restore",
+	"postCreateCommand": "dotnet restore && mkdir -p /jf/{config,cache,media} && chown -R 1000:1000 /jf/",
 
 	// Configure tool-specific properties.
 	"customizations": {
@@ -24,11 +27,8 @@
   	"vscode": {
    	 	// Add the IDs of extensions you want installed when the container is created.
     	"extensions": [
-      	"streetsidesoftware.code-spell-checker"
+		"ms-dotnettools.csharp"
     ]
   }
 }
-
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
 }
