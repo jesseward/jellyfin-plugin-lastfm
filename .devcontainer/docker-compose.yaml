@@ -6,9 +6,9 @@ services:
     user: 1000:1000
     network_mode: 'host'
     volumes:
-      - /jf/config:/config
-      - /jf/cache:/cache
-      - /jf/media:/media
+      - /workspaces/jf/config:/config
+      - /workspaces/jf/cache:/cache
+      - /workspaces/jf/media:/media
     restart: 'unless-stopped'
     # Optional - may be necessary for docker healthcheck to pass if running in host network mode
     extra_hosts:

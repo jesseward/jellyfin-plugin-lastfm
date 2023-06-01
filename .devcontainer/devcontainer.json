@@ -19,7 +19,7 @@
 
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "dotnet restore && mkdir -p /jf/{config,cache,media} && chown -R 1000:1000 /jf/",
+	"postCreateCommand": "/bin/bash setup.sh",
 
 	// Configure tool-specific properties.
 	"customizations": {
