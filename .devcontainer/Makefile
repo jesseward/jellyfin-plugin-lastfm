@@ -2,6 +2,7 @@ all : clean restore down build up
 
 clean:
 	cd /workspaces/jellyfin-plugin-lastfm && dotnet clean
+	rm -rf /workspaces/jf/config/plugins/LastFM
 
 restore:
 	cd /workspaces/jellyfin-plugin-lastfm && dotnet restore
