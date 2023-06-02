@@ -11,7 +11,7 @@ Jellyfin 10.6.0 introduces 3rd party plugin repositories (see: [announcement](ht
 
 # Developer: Build using Codespaces
 
-Codespaces is the quickest solution to get up and running. Once your codespace is up and running, issue the following to build and start-up Jellyfin.
+GitHub Codespaces is the quickest solution to get started with development. Once your codespace is up and running, issue the following to build and start-up Jellyfin.
 
 ```sh
 cd /workspaces/jellyfin-plugin-lastfm/.devcontainer && make
