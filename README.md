@@ -9,9 +9,18 @@ Jellyfin 10.6.0 introduces 3rd party plugin repositories (see: [announcement](ht
 * Repo name: LastFM Stable
 * Repo URL: https://jellyfin-repo.jesseward.com/manifest.json
 
-# Build
+# Developer: Build using Codespaces
 
-.NET core 2.1 is required to build the LastFM plugin. To install the .NET SDK on Linux or macOS, see the download page at https://dotnet.microsoft.com/download . Native package manager instructions can be found for Debian, RHEL, Ubuntu, Fedora, SLES, and CentOS.
+GitHub Codespaces is the quickest solution to get started with development. Once your codespace is up and running, issue the following to build and start-up Jellyfin.
+
+```sh
+cd /workspaces/jellyfin-plugin-lastfm/.devcontainer && make
+```
+
+# Developer: Local Builds
+
+
+Install the .NET SDK on Linux or macOS, see the download page at https://dotnet.microsoft.com/download . Native package manager instructions can be found for Debian, RHEL, Ubuntu, Fedora, SLES, and CentOS.
 
 Once the SDK is installed, run the following.
 
@@ -21,11 +30,9 @@ cd jellyfin-plugin-lastfm
 dotnet build
 ```
 
-# Manual Install
+If the build is successful, the tool will report the path to your Plugin dll (`Jellyfin.Plugin.Lastfm/bin/Debug/*/Jellyfin.Plugin.Lastfm.dll`)
 
-If the build is successful, the tool will report the path to your Plugin dll (`Jellyfin.Plugin.Lastfm/bin/Debug/netstandard2.1/Jellyfin.Plugin.Lastfm.dll`)
-
-The plugin should then be copied into your Jellyfin ${CONFIG_DIR}/plugins directory.
+The plugin should then be copied into your Jellyfin `${CONFIG_DIR}/plugins/LastFM` directory.
 
 # Running Jellyfin from Docker
 
