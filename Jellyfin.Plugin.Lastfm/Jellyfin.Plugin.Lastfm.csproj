@@ -2,15 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <AssemblyVersion>8.0.0.2</AssemblyVersion>
-    <FileVersion>8.0.0.2</FileVersion>
+    <AssemblyVersion>8.0.0.3</AssemblyVersion>
+    <FileVersion>8.0.0.3</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Configuration\configPage.html" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="Configuration\configPage.html" />
   </ItemGroup>
 
@@ -18,7 +15,6 @@
     <PackageReference Include="System.Memory" Version="4.5.4" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
     <PackageReference Include="Jellyfin.Controller" Version="10.*-*" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
   </ItemGroup>
 
 </Project>
