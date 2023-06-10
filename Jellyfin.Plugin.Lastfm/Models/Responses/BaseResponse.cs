@@ -1,14 +1,13 @@
 ﻿namespace Jellyfin.Plugin.Lastfm.Models.Responses
 {
-    using System.Runtime.Serialization;
+    using System.Text.Json.Serialization;
 
-    [DataContract]
     public class BaseResponse
     {
-        [DataMember(Name="message")]
+        [JsonPropertyName("message")]
         public string Message { get; set; }
 
-        [DataMember(Name="error")]
+        [JsonPropertyName("error")]
         public int ErrorCode { get; set; }
 
         public bool IsError()

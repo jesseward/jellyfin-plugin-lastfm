@@ -6,6 +6,7 @@
     using System;
     using System.Collections.Generic;
     using System.Net.Http.Json;
+    using System.Text.Json.Serialization;
     using System.Linq;
     using System.Net.Http;
     using System.Text;
@@ -22,7 +23,6 @@
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly HttpClient _httpClient;
         private readonly ILogger _logger;
-
 
         public BaseLastfmApiClient(IHttpClientFactory httpClientFactory, ILogger logger)
         {
@@ -45,14 +45,17 @@
             // Append the signature
             Helpers.AppendSignature(ref data);
 
-
             using var requestMessage = new HttpRequestMessage(HttpMethod.Post, BuildPostUrl(request.Secure));
             requestMessage.Content = new StringContent(SetPostData(data), Encoding.UTF8, "application/x-www-form-urlencoded");
             using (var response = await _httpClient.SendAsync(requestMessage, CancellationToken.None))
             {
+                var serializeOptions = new JsonSerializerOptions
+                {
+                    NumberHandling = JsonNumberHandling.AllowReadingFromString
+                };
                 try
                 {
-                    var result = await response.Content.ReadFromJsonAsync<TResponse>();
+                    var result = await response.Content.ReadFromJsonAsync<TResponse>(serializeOptions);
                     // Lets Log the error here to ensure all errors are logged
                     if (result.IsError())
                         _logger.LogError(result.Message);
@@ -61,7 +64,7 @@
                 }
                 catch (Exception e)
                 {
-                    _logger.LogDebug(e.Message);
+                    _logger.LogError(e.Message);
                 }
             }
 
@@ -77,9 +80,13 @@
         {
             using (var response = await _httpClient.GetAsync(BuildGetUrl(request.ToDictionary(), request.Secure), cancellationToken))
             {
+                var serializeOptions = new JsonSerializerOptions
+                {
+                    NumberHandling = JsonNumberHandling.AllowReadingFromString
+                };
                 try
                 {
-                    var result = await response.Content.ReadFromJsonAsync<TResponse>();
+                    var result = await response.Content.ReadFromJsonAsync<TResponse>(serializeOptions);
 
                     // Lets Log the error here to ensure all errors are logged
                     if (result.IsError())
@@ -89,9 +96,8 @@
                 }
                 catch (Exception e)
                 {
-                    _logger.LogDebug(e.Message);
+                    _logger.LogError(e.Message);
                 }
-
                 return null;
             }
         }

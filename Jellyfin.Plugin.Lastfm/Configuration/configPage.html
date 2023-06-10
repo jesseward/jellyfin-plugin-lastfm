@@ -1,10 +1,13 @@
 ﻿<!DOCTYPE html>
 <html>
+
 <head>
     <title>Last.fm Scrobbler Configuration</title>
 </head>
+
 <body>
-    <div id="LastfmScrobblerConfigurationPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-select,emby-checkbox">
+    <div id="LastfmScrobblerConfigurationPage" data-role="page" class="page type-interior pluginConfigurationPage"
+        data-require="emby-input,emby-button,emby-select,emby-checkbox">
 
         <div data-role="content">
             <div class="content-primary">
@@ -114,13 +117,13 @@
                     this.$el.find('#optionScrobble').prop('checked', data.Options.Scrobble);
                     this.$el.find('#optionFavourite').prop('checked', data.Options.SyncFavourites);
 
-                    //Dont forget to call checkboxradio('refresh') otherwise the UI wont update
+                    // Don't forget to call checkboxradio('refresh') otherwise the UI wont update
                 },
 
                 save: function (username, password) {
                     var userConfig = this.getCurrentSelectedUser();
 
-                    //If the conig for the user doesnt exist, create one
+                    //If the config for the user doesn't exist, create one
                     if (!userConfig) {
                         userConfig = $.extend({}, this.configDefaults, { MediaBrowserUserId: this.getCurrentSelectedUserId() });
 
@@ -143,10 +146,10 @@
                     //Get session with user data
                     ApiClient.LastfmGetMobileSession(username, password).then($.proxy(function (data) {
                         //Check if we have data
-                        if (data && data.Session) {
+                        if (data && data.session) {
 
-                            userConfig.Username = data.Session.Name;
-                            userConfig.SessionKey = data.Session.Key;
+                            userConfig.Username = data.session.name;
+                            userConfig.SessionKey = data.session.key;
 
                             //Save
                             this.doSave();
@@ -154,8 +157,8 @@
                             return;
                         }
 
-                        Dashboard.alert(data.Message || "Something went wrong");
-                        console.log(data.Message);
+                        Dashboard.alert(data.message || "Something went wrong");
+                        console.log(data.message);
                     }, this));
                     Dashboard.hideLoadingMsg();
                 },
@@ -253,4 +256,5 @@
             };</script>
     </div>
 </body>
+
 </html>

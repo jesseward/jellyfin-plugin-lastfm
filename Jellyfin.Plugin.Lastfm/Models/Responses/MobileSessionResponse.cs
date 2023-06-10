@@ -1,11 +1,10 @@
 ﻿namespace Jellyfin.Plugin.Lastfm.Models.Responses
 {
-    using System.Runtime.Serialization;
+    using System.Text.Json.Serialization;
 
-    [DataContract]
     public class MobileSessionResponse : BaseResponse
     {
-        [DataMember(Name="session")]
+        [JsonPropertyName("session")]
         public MobileSession Session { get; set; }
     }
 }

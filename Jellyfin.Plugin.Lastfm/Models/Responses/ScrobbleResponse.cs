@@ -1,11 +1,10 @@
 ﻿namespace Jellyfin.Plugin.Lastfm.Models.Responses
 {
-    using System.Runtime.Serialization;
+    using System.Text.Json.Serialization;
 
-    [DataContract]
     public class ScrobbleResponse : BaseResponse
     {
-        [DataMember(Name = "scrobbles")]
+        [JsonPropertyName("scrobbles")]
         public Scrobbles Scrobbles { get; set; }
     }
 }

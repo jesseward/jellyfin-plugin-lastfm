@@ -1,17 +1,16 @@
 ﻿namespace Jellyfin.Plugin.Lastfm.Models
 {
-    using System.Runtime.Serialization;
+    using System.Text.Json.Serialization;
 
-    [DataContract]
     public class MobileSession
     {
-        [DataMember(Name = "name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
 
-        [DataMember(Name = "key")]
+        [JsonPropertyName("key")]
         public string Key { get; set; }
 
-        [DataMember(Name = "subscriber")]
+        [JsonPropertyName("subscriber")]
         public int Subscriber { get; set; }
     }
 }

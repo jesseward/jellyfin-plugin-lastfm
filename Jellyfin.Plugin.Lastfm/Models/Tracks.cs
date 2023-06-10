@@ -1,27 +1,25 @@
 ﻿namespace Jellyfin.Plugin.Lastfm.Models
 {
-    using System.Runtime.Serialization;
+    using System.Text.Json.Serialization;
 
-    [DataContract]
     public class BaseLastfmTrack
     {
-        [DataMember(Name="artist")]
+        [JsonPropertyName("artist")]
         public LastfmArtist Artist { get; set; }
 
-        [DataMember(Name = "name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
 
-        [DataMember(Name = "mbid")]
+        [JsonPropertyName("mbid")]
         public string MusicBrainzId { get; set; }
     }
 
-    [DataContract]
     public class LastfmArtist
     {
-        [DataMember(Name="name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
 
-        [DataMember(Name = "mbid")]
+        [JsonPropertyName("mbid")]
         public string MusicBrainzId { get; set; }
     }
 
@@ -29,10 +27,10 @@
     {
     }
 
-    [DataContract]
+
     public class LastfmTrack : BaseLastfmTrack
     {
-        [DataMember(Name="playcount")]
+        [JsonPropertyName("playcount")]
         public int PlayCount { get; set; }
     }
 }
