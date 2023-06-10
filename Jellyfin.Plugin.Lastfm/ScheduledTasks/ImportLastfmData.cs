@@ -115,8 +115,13 @@
                 return;
             }
 
-            // Group the list of loved tracks by artist
-            List<IGrouping<string, LastfmLovedTrack>> groupedLovedTracks = lovedTracks.GroupBy(t => t.Artist.MusicBrainzId).ToList();
+            // remove any results from last fm loved tracks that do _not_ have an associated musicbrainz id
+            lovedTracks.RemoveAll(t => String.IsNullOrEmpty(t.Artist.MusicBrainzId));
+            _logger.LogInformation("User {User} has {SongCount} loved tracks in last.fm that have an associated musicbrainz Artist id", user.Username, lovedTracks.Count);
+            if (lovedTracks.Count == 0)
+                return;
+
+            var lovedTracksGroupedByArtist = lovedTracks.GroupBy(t => t.Artist.MusicBrainzId).ToDictionary(t => t.Key, t => t.ToList());
 
             // Iterate over each artist in user's library
             // iterate over each song by artist
@@ -126,17 +131,12 @@
                 cancellationToken.ThrowIfCancellationRequested();
 
                 string artistMBid = Helpers.GetMusicBrainzArtistId(artist);
-                if (artistMBid == null)
+                if (String.IsNullOrEmpty(artistMBid))
                     continue;
 
-                if (groupedLovedTracks.FirstOrDefault(t => t.Key.Equals(artistMBid)) == null || !groupedLovedTracks.FirstOrDefault(t => t.Key.Equals(artistMBid)).Any())
-                {
+                if (!lovedTracksGroupedByArtist.ContainsKey(artistMBid))
                     continue;
-                }
 
-                _logger.LogDebug("Found {0} LastFM lovedtracks for {1}",
-                                 groupedLovedTracks.FirstOrDefault(t => t.Key.Equals(artistMBid)).ToList().Count,
-                                 artist.Name);
                 // Loop through each song
                 foreach (Audio song in artist.GetTaggedItems(new InternalItemsQuery(user)
                 {
@@ -144,7 +144,18 @@
                     EnableTotalRecordCount = false
                 }).OfType<Audio>().ToList())
                 {
-                    LastfmLovedTrack matchedSong = Helpers.FindMatchedLastfmSong(groupedLovedTracks.FirstOrDefault(t => t.Key.Equals(artistMBid)).ToList(), song);
+                    LastfmLovedTrack matchedSong = null;
+
+                    foreach (LastfmLovedTrack artistTrack in lovedTracksGroupedByArtist[artistMBid])
+                    {
+                        if (StringHelper.IsLike(song.Name, artistTrack.Name))
+                        {
+                            _logger.LogInformation("Match Found: {Artist}-{Song} <== LastFM :: Library ==> {LovedArtist}-{LovedSong}",
+                            artistTrack.Artist.Name, artistTrack.Name,
+                            artist.Name, song.Name);
+                            matchedSong = artistTrack;
+                        }
+                    }
 
                     if (matchedSong == null)
                         continue;
@@ -155,11 +166,10 @@
                     var userData = _userDataManager.GetUserData(user, song);
                     userData.IsFavorite = true;
                     _userDataManager.SaveUserData(user, song, userData, UserDataSaveReason.UpdateUserRating, cancellationToken);
-                    _logger.LogDebug("Found library match for {0} = {1}", song.Name, matchedSong.Name);
                 }
             }
 
-            _logger.LogInformation("Finished Last.fm lovedTracks sync for {0}. Matched Songs: {2}",user.Username,  matchedSongs);
+            _logger.LogInformation("Finished Last.fm lovedTracks sync for {User}. Matched Songs: {MatchCount}", user.Username, matchedSongs);
         }
 
         /// <summary>
