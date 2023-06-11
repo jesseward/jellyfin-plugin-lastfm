@@ -77,7 +77,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
                 }
             }
 
-            if (info ==  null)
+            if (info == null)
             {
                 var musicBrainzReleaseGroupId = item.GetProviderId(MetadataProvider.MusicBrainzReleaseGroup);
 
@@ -125,7 +125,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
 
             if (string.Equals(size, "mega", StringComparison.OrdinalIgnoreCase))
             {
-                
+
             }
             else if (string.Equals(size, "extralarge", StringComparison.OrdinalIgnoreCase))
             {

@@ -49,7 +49,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
         {
             string id;
             info.ProviderIds.TryGetValue(MetadataProvider.MusicBrainzAlbumArtist.ToString(), out id);
-            
+
             if (string.IsNullOrEmpty(id))
             {
                 return info.SongInfos.Select(i => i.GetProviderId(MetadataProvider.MusicBrainzAlbumArtist))

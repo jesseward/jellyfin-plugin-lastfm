@@ -1,0 +1,6 @@
+{
+    "dotnet.defaultSolution": "Jellyfin.Plugin.Lastfm.sln",
+    "omnisharp.enableRoslynAnalyzers": true,
+    "omnisharp.enableEditorConfigSupport": true,
+    "files.autoSave": "off"
+}

@@ -28,7 +28,7 @@
 
         public override Dictionary<string, string> ToDictionary()
         {
-            return new Dictionary<string, string>(base.ToDictionary()) 
+            return new Dictionary<string, string>(base.ToDictionary())
             {
                 { "sk", SessionKey },
             };
@@ -38,6 +38,6 @@
     public interface IPagedRequest
     {
         int Limit { get; set; }
-        int Page  { get; set; }
+        int Page { get; set; }
     }
 }

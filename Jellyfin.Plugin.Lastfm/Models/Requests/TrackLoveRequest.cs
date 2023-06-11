@@ -4,7 +4,7 @@
 
     public class TrackLoveRequest : BaseAuthedRequest
     {
-        public string Track  { get; set; }
+        public string Track { get; set; }
         public string Artist { get; set; }
 
         public override Dictionary<string, string> ToDictionary()

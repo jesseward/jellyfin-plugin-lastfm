@@ -7,9 +7,9 @@
         public string Password { get; set; }
         public string Username { get; set; }
 
-        public override Dictionary<string, string> ToDictionary() 
+        public override Dictionary<string, string> ToDictionary()
         {
-            return new Dictionary<string, string>(base.ToDictionary()) 
+            return new Dictionary<string, string>(base.ToDictionary())
             {
                 { "password", Password },
                 { "username", Username },

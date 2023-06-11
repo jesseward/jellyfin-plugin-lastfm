@@ -16,7 +16,7 @@
 
     public class LastFmUserOptions
     {
-        public bool Scrobble       { get; set; }
+        public bool Scrobble { get; set; }
         public bool SyncFavourites { get; set; }
     }
 }
