@@ -22,11 +22,11 @@ namespace Jellyfin.Plugin.Lastfm
     {
 
         // if the length of the song is >= 30 seconds, allow scrobble.
-        private const long minimumSongLengthToScrobbleInTicks = 30 * TimeSpan.TicksPerSecond;
+        private const long MinimumSongLengthToScrobbleInTicks = 30 * TimeSpan.TicksPerSecond;
         // if a song reaches >= 4 minutes  in playtime, allow scrobble.
-        private const long minimumPlayTimeToScrobbleInTicks = 4 * TimeSpan.TicksPerMinute;
+        private const long MinimumPlayTimeToScrobbleInTicks = 4 * TimeSpan.TicksPerMinute;
         // if a song reaches >= 50% played, allow scrobble.
-        private const double minimumPlayPercentage = 50.00;
+        private const double MinimumPlayPercentage = 50.00;
 
         private readonly ISessionManager _sessionManager;
         private readonly IUserDataManager _userDataManager;
@@ -120,24 +120,8 @@ namespace Jellyfin.Plugin.Lastfm
                 return;
             }
 
-            // Required checkpoints before scrobbling noted at https://www.last.fm/api/scrobbling#when-is-a-scrobble-a-scrobble .
-            // A track should only be scrobbled when the following conditions have been met:
-            //   * The track must be longer than 30 seconds.
-            //   * And the track has been played for at least half its duration, or for 4 minutes (whichever occurs earlier.)
-            // is the track length greater than 30 seconds.
-            if (item.RunTimeTicks < minimumSongLengthToScrobbleInTicks)
-            {
-                _logger.LogDebug("{0} - played {1} ticks which is less minimumSongLengthToScrobbleInTicks ({2}), won't scrobble.", item.Name, item.RunTimeTicks, minimumSongLengthToScrobbleInTicks);
+            if (!IsAScrobbleAScrobble(item, (double)e.PlaybackPositionTicks))
                 return;
-            }
-
-            // the track must have played the minimum percentage (minimumPlayPercentage = 50%) or played for atleast 4 minutes (minimumPlayTimeToScrobbleInTicks).
-            var playPercent = ((double)e.PlaybackPositionTicks / item.RunTimeTicks) * 100;
-            if (playPercent < minimumPlayPercentage & e.PlaybackPositionTicks < minimumPlayTimeToScrobbleInTicks)
-            {
-                _logger.LogDebug("{0} - played {1}%, Last.Fm requires minplayed={2}% . played {3} ticks of minimumPlayTimeToScrobbleInTicks ({4}), won't scrobble", item.Name, playPercent, minimumPlayPercentage, e.PlaybackPositionTicks, minimumPlayTimeToScrobbleInTicks);
-                return;
-            }
 
             var user = e.Users.FirstOrDefault();
             if (user == null)
@@ -215,6 +199,35 @@ namespace Jellyfin.Plugin.Lastfm
                 return;
             }
             await _apiClient.NowPlaying(item, lastfmUser).ConfigureAwait(false);
+        }
+
+        private bool IsAScrobbleAScrobble(Audio item, double playBackPosition)
+        {
+
+            // Required checkpoints before scrobbling noted at https://www.last.fm/api/scrobbling#when-is-a-scrobble-a-scrobble .
+            // A track should only be scrobbled when the following conditions have been met:
+            //   * The track must be longer than 30 seconds.
+            //   * And the track has been played for at least half its duration, or for 4 minutes (whichever occurs earlier.)
+            // is the track length greater than 30 seconds.
+            if (item.RunTimeTicks < MinimumSongLengthToScrobbleInTicks)
+            {
+                _logger.LogDebug("{Song} - played {Ticks} ticks which is less minimumSongLengthToScrobbleInTicks ({MinTicks}). Will not scrobble.", item.Name, item.RunTimeTicks, MinimumSongLengthToScrobbleInTicks);
+                return false;
+            }
+
+            // the track must have played the minimum percentage (minimumPlayPercentage = 50%) or played for atleast 4 minutes (minimumPlayTimeToScrobbleInTicks).
+            var playPercent = (playBackPosition / item.RunTimeTicks) * 100;
+            if (playPercent < MinimumPlayPercentage & playBackPosition < MinimumPlayTimeToScrobbleInTicks)
+            {
+                _logger.LogDebug("{Song} - played {PlayPercent}%, Last.Fm requires minplayed={MinPlayPercent}% . played {PlayTicks} ticks of minimumPlayTimeToScrobbleInTicks ({MinPlayTicks}), won't scrobble",
+                                 item.Name,
+                                 playPercent,
+                                 MinimumPlayPercentage,
+                                 playBackPosition,
+                                 MinimumPlayTimeToScrobbleInTicks);
+                return false;
+            }
+            return true;
         }
 
         /// <summary>
