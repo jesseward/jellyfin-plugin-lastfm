@@ -1,17 +1,22 @@
-﻿namespace Jellyfin.Plugin.Lastfm.Api
+namespace Jellyfin.Plugin.Lastfm.Api
 {
-    using MediaBrowser.Controller.Entities.Audio;
-    using Models;
-    using Models.Requests;
-    using Models.Responses;
-    using Resources;
     using System;
     using System.Linq;
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
-    using Utils;
+
+    using MediaBrowser.Controller.Entities.Audio;
+
     using Microsoft.Extensions.Logging;
+
+    using Models;
+    using Models.Requests;
+    using Models.Responses;
+
+    using Resources;
+
+    using Utils;
 
     public class LastfmApiClient : BaseLastfmApiClient
     {

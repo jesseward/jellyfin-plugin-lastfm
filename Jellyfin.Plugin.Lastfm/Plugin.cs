@@ -1,8 +1,10 @@
-﻿namespace Jellyfin.Plugin.Lastfm
+namespace Jellyfin.Plugin.Lastfm
 {
     using System;
     using System.Collections.Generic;
+
     using Configuration;
+
     using MediaBrowser.Common.Configuration;
     using MediaBrowser.Common.Plugins;
     using MediaBrowser.Model.Plugins;

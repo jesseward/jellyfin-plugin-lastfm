@@ -1,0 +1,4 @@
+{
+    "omnisharp.enableRoslynAnalyzers": true,
+    "dotnet.defaultSolution": "Jellyfin.Plugin.Lastfm.sln"
+}

@@ -1,9 +1,3 @@
-﻿using MediaBrowser.Controller.Configuration;
-using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Audio;
-using MediaBrowser.Controller.Providers;
-using MediaBrowser.Model.Entities;
-using MediaBrowser.Model.Providers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,6 +5,13 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+
+using MediaBrowser.Controller.Configuration;
+using MediaBrowser.Controller.Entities;
+using MediaBrowser.Controller.Entities.Audio;
+using MediaBrowser.Controller.Providers;
+using MediaBrowser.Model.Entities;
+using MediaBrowser.Model.Providers;
 
 namespace Jellyfin.Plugin.Lastfm.Providers
 {
@@ -77,7 +78,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
                 }
             }
 
-            if (info ==  null)
+            if (info == null)
             {
                 var musicBrainzReleaseGroupId = item.GetProviderId(MetadataProvider.MusicBrainzReleaseGroup);
 
@@ -125,7 +126,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
 
             if (string.Equals(size, "mega", StringComparison.OrdinalIgnoreCase))
             {
-                
+
             }
             else if (string.Equals(size, "extralarge", StringComparison.OrdinalIgnoreCase))
             {

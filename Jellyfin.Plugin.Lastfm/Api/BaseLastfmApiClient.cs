@@ -1,20 +1,24 @@
-﻿namespace Jellyfin.Plugin.Lastfm.Api
+namespace Jellyfin.Plugin.Lastfm.Api
 {
-    using Models.Requests;
-    using Models.Responses;
-    using Resources;
     using System;
     using System.Collections.Generic;
-    using System.Net.Http.Json;
-    using System.Text.Json.Serialization;
     using System.Linq;
     using System.Net.Http;
+    using System.Net.Http.Json;
     using System.Text;
     using System.Text.Json;
+    using System.Text.Json.Serialization;
     using System.Threading;
     using System.Threading.Tasks;
-    using Utils;
+
     using Microsoft.Extensions.Logging;
+
+    using Models.Requests;
+    using Models.Responses;
+
+    using Resources;
+
+    using Utils;
 
     public class BaseLastfmApiClient
     {
@@ -131,4 +135,3 @@
         #endregion
     }
 }
-

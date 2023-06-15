@@ -1,7 +1,8 @@
-﻿namespace Jellyfin.Plugin.Lastfm.Configuration
+namespace Jellyfin.Plugin.Lastfm.Configuration
 {
-    using Models;
     using MediaBrowser.Model.Plugins;
+
+    using Models;
 
     /// <summary>
     /// Class PluginConfiguration

@@ -1,22 +1,28 @@
-﻿namespace Jellyfin.Plugin.Lastfm.ScheduledTasks
+namespace Jellyfin.Plugin.Lastfm.ScheduledTasks
 {
-    using Api;
-    using Jellyfin.Data.Entities;
-    using Jellyfin.Data.Enums;
-    using MediaBrowser.Model.Tasks;
-    using MediaBrowser.Controller.Entities;
-    using MediaBrowser.Controller.Entities.Audio;
-    using MediaBrowser.Controller.Library;
-    using MediaBrowser.Model.Entities;
-    using Models;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
-    using Utils;
+
+    using Api;
+
+    using Jellyfin.Data.Entities;
+    using Jellyfin.Data.Enums;
+
+    using MediaBrowser.Controller.Entities;
+    using MediaBrowser.Controller.Entities.Audio;
+    using MediaBrowser.Controller.Library;
+    using MediaBrowser.Model.Entities;
+    using MediaBrowser.Model.Tasks;
+
     using Microsoft.Extensions.Logging;
+
+    using Models;
+
+    using Utils;
 
     /// <summary>
     /// Task that will sync each users LastFM loved songs with their local library.
@@ -25,7 +31,7 @@
     {
         private readonly IUserManager _userManager;
         private readonly IUserDataManager _userDataManager;
-        private ILibraryManager _libraryManager;
+        private readonly ILibraryManager _libraryManager;
         private readonly ILogger<ImportLastfmData> _logger;
         private readonly LastfmApiClient _apiClient;
 

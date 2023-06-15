@@ -1,4 +1,4 @@
-﻿namespace Jellyfin.Plugin.Lastfm.Utils
+namespace Jellyfin.Plugin.Lastfm.Utils
 {
     using System;
     using System.Text.RegularExpressions;

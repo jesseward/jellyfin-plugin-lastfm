@@ -1,4 +1,4 @@
-﻿namespace Jellyfin.Plugin.Lastfm.Models
+namespace Jellyfin.Plugin.Lastfm.Models
 {
     using System.Text.Json.Serialization;
 

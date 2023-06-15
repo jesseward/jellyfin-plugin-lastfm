@@ -1,10 +1,10 @@
-﻿namespace Jellyfin.Plugin.Lastfm.Models.Requests
+namespace Jellyfin.Plugin.Lastfm.Models.Requests
 {
     using System.Collections.Generic;
 
     public class TrackLoveRequest : BaseAuthedRequest
     {
-        public string Track  { get; set; }
+        public string Track { get; set; }
         public string Artist { get; set; }
 
         public override Dictionary<string, string> ToDictionary()

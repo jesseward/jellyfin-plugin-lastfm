@@ -1,4 +1,4 @@
-﻿namespace Jellyfin.Plugin.Lastfm.Models.Requests
+namespace Jellyfin.Plugin.Lastfm.Models.Requests
 {
     using System.Collections.Generic;
     using System.Runtime.Serialization;
