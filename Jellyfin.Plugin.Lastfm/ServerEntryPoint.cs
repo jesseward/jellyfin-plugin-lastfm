@@ -1,4 +1,4 @@
-namespace Jellyfin.Plugin.Lastfm
+﻿namespace Jellyfin.Plugin.Lastfm
 {
     using System;
     using System.Linq;
@@ -72,7 +72,7 @@ namespace Jellyfin.Plugin.Lastfm
         async void UserDataSaved(object sender, UserDataSaveEventArgs e)
         {
             // We only care about audio
-            if (!(e.Item is Audio))
+            if (e.Item is not Audio)
                 return;
 
             // We also only care about User rating changes
@@ -109,14 +109,14 @@ namespace Jellyfin.Plugin.Lastfm
         private async void PlaybackStopped(object sender, PlaybackStopEventArgs e)
         {
             // We only care about audio
-            if (!(e.Item is Audio))
+            if (e.Item is not Audio)
                 return;
 
             var item = e.Item as Audio;
 
             if (e.PlaybackPositionTicks == null)
             {
-                _logger.LogDebug("Playback ticks for {0} is null", item.Name);
+                _logger.LogDebug("Playback ticks for {Track} is null", item.Name);
                 return;
             }
 
@@ -125,9 +125,8 @@ namespace Jellyfin.Plugin.Lastfm
 
             var user = e.Users.FirstOrDefault();
             if (user == null)
-            {
                 return;
-            }
+
 
             var lastfmUser = Utils.UserHelpers.GetUser(user);
             if (lastfmUser == null)
@@ -139,19 +138,19 @@ namespace Jellyfin.Plugin.Lastfm
             // User doesn't want to scrobble
             if (!lastfmUser.Options.Scrobble)
             {
-                _logger.LogDebug("{0} ({1}) does not want to scrobble", user.Username, lastfmUser.Username);
+                _logger.LogDebug("{User} ({LastFMUser}) does not want to scrobble", user.Username, lastfmUser.Username);
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(lastfmUser.SessionKey))
             {
-                _logger.LogInformation("No session key present, aborting");
+                _logger.LogWarning("No session key present for {User}, aborting", user.Username);
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(item.Artists.FirstOrDefault()) || string.IsNullOrWhiteSpace(item.Name))
             {
-                _logger.LogInformation("track {0} is missing  artist ({1}) or track name ({2}) metadata. Not submitting", item.Path, item.Artists.FirstOrDefault(), item.Name);
+                _logger.LogInformation("track {TrackPath} is missing artist ({Artist}) or track name ({Track}) metadata. Not submitting", item.Path, item.Artists.FirstOrDefault(), item.Name);
                 return;
             }
             await _apiClient.Scrobble(item, lastfmUser).ConfigureAwait(false);
@@ -163,14 +162,12 @@ namespace Jellyfin.Plugin.Lastfm
         private async void PlaybackStart(object sender, PlaybackProgressEventArgs e)
         {
             // We only care about audio
-            if (!(e.Item is Audio))
+            if (e.Item is not Audio)
                 return;
 
             var user = e.Users.FirstOrDefault();
             if (user == null)
-            {
                 return;
-            }
 
             var lastfmUser = Utils.UserHelpers.GetUser(user);
             if (lastfmUser == null)
@@ -182,7 +179,7 @@ namespace Jellyfin.Plugin.Lastfm
             // User doesn't want to scrobble
             if (!lastfmUser.Options.Scrobble)
             {
-                _logger.LogDebug("{0} ({1}) does not want to scrobble", user.Username, lastfmUser.Username);
+                _logger.LogDebug("{User} ({LastFMUser}) does not want to scrobble", user.Username, lastfmUser.Username);
                 return;
             }
 
@@ -195,7 +192,10 @@ namespace Jellyfin.Plugin.Lastfm
             var item = e.Item as Audio;
             if (string.IsNullOrWhiteSpace(item.Artists.FirstOrDefault()) || string.IsNullOrWhiteSpace(item.Name))
             {
-                _logger.LogInformation("track {0} is missing artist ({1}) or track name ({2}) metadata. Not submitting", item.Path, item.Artists.FirstOrDefault(), item.Name);
+                _logger.LogInformation("track {TrackPath} is missing artist ({Artist}) or track name ({Track}) metadata. Not submitting",
+                                       item.Path,
+                                       item.Artists.FirstOrDefault(),
+                                       item.Name);
                 return;
             }
             await _apiClient.NowPlaying(item, lastfmUser).ConfigureAwait(false);
@@ -235,6 +235,16 @@ namespace Jellyfin.Plugin.Lastfm
         /// </summary>
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing) return;
             // Unbind events
             _sessionManager.PlaybackStart -= PlaybackStart;
             _sessionManager.PlaybackStopped -= PlaybackStopped;
