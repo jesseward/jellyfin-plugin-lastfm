@@ -139,9 +139,14 @@
         /// <returns></returns>
         public async Task<bool> LoveTrack(Audio item, LastfmUser user, bool love = true)
         {
+            var artist = item.Artists.FirstOrDefault();
+            if (artist == null) {
+                return false;
+            }
+
             var request = new TrackLoveRequest
             {
-                Artist = item.Artists.First(),
+                Artist = artist,
                 Track = item.Name,
 
                 ApiKey = Strings.Keys.LastfmApiKey,
@@ -157,11 +162,11 @@
 
                 if (response != null && !response.IsError())
                 {
-                    _logger.LogInformation("{0} {2}loved track '{1}'", user.Username, item.Name, (love ? "" : "un"));
+                    _logger.LogInformation("{Username} {LovedState}loved track '{Track}'", user.Username,  love ? "" : "un", item.Name);
                     return true;
                 }
 
-                _logger.LogError("{0} Failed to love = {3} track '{1}' - {2}", user.Username, item.Name, response.Message, love);
+                _logger.LogError("{Username} Failed to {LoveState}love track '{Track}' - {Response}", user.Username, love ? "" : "un", item.Name, response.Message);
                 return false;
             }
             catch (Exception ex)
