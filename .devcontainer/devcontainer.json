@@ -8,15 +8,15 @@
 	"image": "mcr.microsoft.com/devcontainers/dotnet:0-7.0",
 	"features": {
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
-		"ghcr.io/devcontainers/features/dotnet:1": {
+		"ghcr.io/devcontainers/features/dotnet:2.0.2": {
 			"installUsingApt": true,
-			"version": "7"
-		}
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/sshd:1": {}
 	},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [5000, 8096],
-
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": "/bin/bash /workspaces/jellyfin-plugin-lastfm/.devcontainer/setup.sh",
@@ -25,10 +25,10 @@
 	"customizations": {
   	// Configure properties specific to VS Code.
   	"vscode": {
-   	 	// Add the IDs of extensions you want installed when the container is created.
-    	"extensions": [
-		"ms-dotnettools.csharp"
-    ]
-  }
-}
+			// Add the IDs of extensions you want installed when the container is created.
+			"extensions": [
+			"ms-dotnettools.csharp"
+			]
+		}
+	}
 }
