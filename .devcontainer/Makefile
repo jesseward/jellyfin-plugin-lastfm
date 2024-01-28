@@ -2,16 +2,16 @@ all : clean restore down build up
 
 clean:
 	cd /workspaces/jellyfin-plugin-lastfm && dotnet clean
-	rm -rf /workspaces/jf/config/plugins/LastFM
+	rm -rf /opt/jellyfin/config/plugins/LastFM
 
 restore:
 	cd /workspaces/jellyfin-plugin-lastfm && dotnet restore
 
-build: 
-	cd /workspaces/jellyfin-plugin-lastfm && dotnet build --output /workspaces/jf/config/plugins/LastFM
+build:
+	cd /workspaces/jellyfin-plugin-lastfm && dotnet build --output /opt/jellyfin/config/plugins/LastFM
 
 up:
-	cd /workspaces/jellyfin-plugin-lastfm/.devcontainer && docker-compose up
+	/usr/local/share/jellyfin-init.sh &
 
 down:
-	cd /workspaces/jellyfin-plugin-lastfm/.devcontainer && docker-compose down
+	sudo pkill -f /opt/jellyfin/jellyfin/jellyfin
