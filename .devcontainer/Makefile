@@ -11,7 +11,7 @@ build:
 	cd /workspaces/jellyfin-plugin-lastfm && dotnet build --output /opt/jellyfin/config/plugins/LastFM
 
 up:
-	/usr/local/share/jellyfin-init.sh
+	/usr/local/share/jellyfin-init.sh &
 
 down:
-	pkill /opt/jellyfin/jellyfin/jellyfin
+	sudo pkill -f /opt/jellyfin/jellyfin/jellyfin

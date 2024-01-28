@@ -6,6 +6,7 @@ PROJECT_HOME="/workspaces/jellyfin-plugin-lastfm/"
 
 cd ${PROJECT_HOME} && dotnet restore
 
-sudo mkdir -p ${JELLYFIN_VOLUME}/config/plugins
-sudo mkdir -p ${JELLYFIN_VOLUME}/media
-sudo cp -R ${PROJECT_HOME}/tests/* ${JELLYFIN_VOLUME}/media/
+sudo chown -R ${USER} ${JELLYFIN_VOLUME}
+mkdir -p ${JELLYFIN_VOLUME}/config/plugins
+mkdir -p ${JELLYFIN_VOLUME}/media
+cp -R ${PROJECT_HOME}/tests/* ${JELLYFIN_VOLUME}/media/

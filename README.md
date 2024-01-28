@@ -14,7 +14,7 @@ Install the plugin via the Jellyfin plugin repository (see: [announcement](https
 
 ## ❓ Known Issues
 
-###  When enabling the plugin, you receive `Authentication Failed - You do not have permissions to access this service` when authenticating using your last.fm credentials. 
+###  When enabling the plugin, you receive `Authentication Failed - You do not have permissions to access this service` when authenticating using your last.fm credentials.
 
 This error is returned from the last.fm API. If you're certain you have correctly entered your username and password. Try resetting your last.fm username and password (change the password and change it back) via the last.fm site. This may be due to stale credentials cached on the last.fm infastructure. See https://github.com/jesseward/jellyfin-plugin-lastfm/issues/51 for context.
 
@@ -35,6 +35,8 @@ GitHub Codespaces is the quickest solution to get started with development. Once
 ```sh
 cd /workspaces/jellyfin-plugin-lastfm/.devcontainer && make
 ```
+
+Port `8096` is exposed via the Codespace to allow a remote connection to your Jellyfin instance.
 
 ### Developer: Local Builds
 
