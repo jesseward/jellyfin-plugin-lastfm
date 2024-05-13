@@ -2,9 +2,9 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/dotnet
 {
 	"name": "jellyfin-plugin-lastfm",
-	"image": "mcr.microsoft.com/devcontainers/dotnet:0-7.0",
+	"image": "mcr.microsoft.com/devcontainers/dotnet:8.0",
 	"features": {
-		"ghcr.io/devcontainers/features/dotnet:2.0.3": {
+		"ghcr.io/devcontainers/features/dotnet:2.0.5": {
 			"installUsingApt": true,
 			"version": "latest"
 		},
