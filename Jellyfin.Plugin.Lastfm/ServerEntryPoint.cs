@@ -3,7 +3,6 @@
     using Api;
     using MediaBrowser.Controller.Entities.Audio;
     using MediaBrowser.Controller.Library;
-    using MediaBrowser.Controller.Plugins;
     using MediaBrowser.Controller.Session;
     using MediaBrowser.Model.Entities;
     using System.Linq;
@@ -11,17 +10,19 @@
     using System.Threading.Tasks;
     using System;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Hosting;
+    using System.Threading;
 
     /// <summary>
     /// Class ServerEntryPoint
     /// </summary>
-    public class ServerEntryPoint : IServerEntryPoint
+    public class ServerEntryPoint : IHostedService
     {
 
         // if the length of the song is >= 30 seconds, allow scrobble.
-        private const long minimumSongLengthToScrobbleInTicks = 30*TimeSpan.TicksPerSecond;
+        private const long minimumSongLengthToScrobbleInTicks = 30 * TimeSpan.TicksPerSecond;
         // if a song reaches >= 4 minutes  in playtime, allow scrobble.
-        private const long minimumPlayTimeToScrobbleInTicks = 4*TimeSpan.TicksPerMinute;
+        private const long minimumPlayTimeToScrobbleInTicks = 4 * TimeSpan.TicksPerMinute;
         // if a song reaches >= 50% played, allow scrobble.
         private const double minimumPlayPercentage = 50.00;
 
@@ -54,7 +55,7 @@
         /// <summary>
         /// Runs this instance.
         /// </summary>
-        public Task RunAsync()
+        public Task StartAsync(CancellationToken cancellationToken)
         {
             //Bind events
             _sessionManager.PlaybackStart += PlaybackStart;
@@ -132,7 +133,7 @@
             var playPercent = ((double)e.PlaybackPositionTicks / item.RunTimeTicks) * 100;
             if (playPercent < minimumPlayPercentage & e.PlaybackPositionTicks < minimumPlayTimeToScrobbleInTicks)
             {
-               _logger.LogDebug("{0} - played {1}%, Last.Fm requires minplayed={2}% . played {3} ticks of minimumPlayTimeToScrobbleInTicks ({4}), won't scrobble", item.Name, playPercent, minimumPlayPercentage, e.PlaybackPositionTicks, minimumPlayTimeToScrobbleInTicks);
+                _logger.LogDebug("{0} - played {1}%, Last.Fm requires minplayed={2}% . played {3} ticks of minimumPlayTimeToScrobbleInTicks ({4}), won't scrobble", item.Name, playPercent, minimumPlayPercentage, e.PlaybackPositionTicks, minimumPlayTimeToScrobbleInTicks);
                 return;
             }
 
@@ -217,7 +218,7 @@
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        public void Dispose()
+        public Task StopAsync(CancellationToken cancellationToken)
         {
             // Unbind events
             _sessionManager.PlaybackStart -= PlaybackStart;
@@ -226,7 +227,7 @@
 
             // Clean up
             _apiClient = null;
-
+            return Task.CompletedTask;
         }
     }
 }
