@@ -16,7 +16,7 @@
     /// <summary>
     /// Class ServerEntryPoint
     /// </summary>
-    public class ServerEntryPoint : IHostedService
+    public class ServerEntryPoint : IHostedService, IDisposable
     {
 
         // if the length of the song is >= 30 seconds, allow scrobble.
@@ -53,24 +53,12 @@
         }
 
         /// <summary>
-        /// Runs this instance.
-        /// </summary>
-        public Task StartAsync(CancellationToken cancellationToken)
-        {
-            //Bind events
-            _sessionManager.PlaybackStart += PlaybackStart;
-            _sessionManager.PlaybackStopped += PlaybackStopped;
-            _userDataManager.UserDataSaved += UserDataSaved;
-            return Task.CompletedTask;
-        }
-
-        /// <summary>
         /// Let last fm know when a user favourites or unfavourites a track
         /// </summary>
         async void UserDataSaved(object sender, UserDataSaveEventArgs e)
         {
             // We only care about audio
-            if (!(e.Item is Audio))
+            if (e.Item is not Audio)
                 return;
 
             // We also only care about User rating changes
@@ -107,7 +95,7 @@
         private async void PlaybackStopped(object sender, PlaybackStopEventArgs e)
         {
             // We only care about audio
-            if (!(e.Item is Audio))
+            if (e.Item is not Audio)
                 return;
 
             var item = e.Item as Audio;
@@ -177,7 +165,7 @@
         private async void PlaybackStart(object sender, PlaybackProgressEventArgs e)
         {
             // We only care about audio
-            if (!(e.Item is Audio))
+            if (e.Item is not Audio)
                 return;
 
             var user = e.Users.FirstOrDefault();
@@ -216,6 +204,18 @@
         }
 
         /// <summary>
+        /// Runs this instance.
+        /// </summary>
+        public Task StartAsync(CancellationToken cancellationToken)
+        {
+            //Bind events
+            _sessionManager.PlaybackStart += PlaybackStart;
+            _sessionManager.PlaybackStopped += PlaybackStopped;
+            _userDataManager.UserDataSaved += UserDataSaved;
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public Task StopAsync(CancellationToken cancellationToken)
@@ -228,6 +228,11 @@
             // Clean up
             _apiClient = null;
             return Task.CompletedTask;
+        }
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
         }
     }
 }
