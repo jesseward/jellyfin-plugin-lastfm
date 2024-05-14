@@ -3,7 +3,6 @@
     using Api;
     using MediaBrowser.Controller.Entities.Audio;
     using MediaBrowser.Controller.Library;
-    using MediaBrowser.Controller.Plugins;
     using MediaBrowser.Controller.Session;
     using MediaBrowser.Model.Entities;
     using System.Linq;
@@ -11,17 +10,19 @@
     using System.Threading.Tasks;
     using System;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Hosting;
+    using System.Threading;
 
     /// <summary>
     /// Class ServerEntryPoint
     /// </summary>
-    public class ServerEntryPoint : IServerEntryPoint
+    public class ServerEntryPoint : IHostedService, IDisposable
     {
 
         // if the length of the song is >= 30 seconds, allow scrobble.
-        private const long minimumSongLengthToScrobbleInTicks = 30*TimeSpan.TicksPerSecond;
+        private const long minimumSongLengthToScrobbleInTicks = 30 * TimeSpan.TicksPerSecond;
         // if a song reaches >= 4 minutes  in playtime, allow scrobble.
-        private const long minimumPlayTimeToScrobbleInTicks = 4*TimeSpan.TicksPerMinute;
+        private const long minimumPlayTimeToScrobbleInTicks = 4 * TimeSpan.TicksPerMinute;
         // if a song reaches >= 50% played, allow scrobble.
         private const double minimumPlayPercentage = 50.00;
 
@@ -52,24 +53,12 @@
         }
 
         /// <summary>
-        /// Runs this instance.
-        /// </summary>
-        public Task RunAsync()
-        {
-            //Bind events
-            _sessionManager.PlaybackStart += PlaybackStart;
-            _sessionManager.PlaybackStopped += PlaybackStopped;
-            _userDataManager.UserDataSaved += UserDataSaved;
-            return Task.CompletedTask;
-        }
-
-        /// <summary>
         /// Let last fm know when a user favourites or unfavourites a track
         /// </summary>
         async void UserDataSaved(object sender, UserDataSaveEventArgs e)
         {
             // We only care about audio
-            if (!(e.Item is Audio))
+            if (e.Item is not Audio)
                 return;
 
             // We also only care about User rating changes
@@ -106,7 +95,7 @@
         private async void PlaybackStopped(object sender, PlaybackStopEventArgs e)
         {
             // We only care about audio
-            if (!(e.Item is Audio))
+            if (e.Item is not Audio)
                 return;
 
             var item = e.Item as Audio;
@@ -132,7 +121,7 @@
             var playPercent = ((double)e.PlaybackPositionTicks / item.RunTimeTicks) * 100;
             if (playPercent < minimumPlayPercentage & e.PlaybackPositionTicks < minimumPlayTimeToScrobbleInTicks)
             {
-               _logger.LogDebug("{0} - played {1}%, Last.Fm requires minplayed={2}% . played {3} ticks of minimumPlayTimeToScrobbleInTicks ({4}), won't scrobble", item.Name, playPercent, minimumPlayPercentage, e.PlaybackPositionTicks, minimumPlayTimeToScrobbleInTicks);
+                _logger.LogDebug("{0} - played {1}%, Last.Fm requires minplayed={2}% . played {3} ticks of minimumPlayTimeToScrobbleInTicks ({4}), won't scrobble", item.Name, playPercent, minimumPlayPercentage, e.PlaybackPositionTicks, minimumPlayTimeToScrobbleInTicks);
                 return;
             }
 
@@ -176,7 +165,7 @@
         private async void PlaybackStart(object sender, PlaybackProgressEventArgs e)
         {
             // We only care about audio
-            if (!(e.Item is Audio))
+            if (e.Item is not Audio)
                 return;
 
             var user = e.Users.FirstOrDefault();
@@ -215,9 +204,21 @@
         }
 
         /// <summary>
+        /// Runs this instance.
+        /// </summary>
+        public Task StartAsync(CancellationToken cancellationToken)
+        {
+            //Bind events
+            _sessionManager.PlaybackStart += PlaybackStart;
+            _sessionManager.PlaybackStopped += PlaybackStopped;
+            _userDataManager.UserDataSaved += UserDataSaved;
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        public void Dispose()
+        public Task StopAsync(CancellationToken cancellationToken)
         {
             // Unbind events
             _sessionManager.PlaybackStart -= PlaybackStart;
@@ -226,7 +227,12 @@
 
             // Clean up
             _apiClient = null;
+            return Task.CompletedTask;
+        }
 
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
         }
     }
 }

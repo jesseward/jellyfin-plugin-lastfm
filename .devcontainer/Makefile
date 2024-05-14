@@ -2,13 +2,14 @@ all : clean restore down build up
 
 clean:
 	cd /workspaces/jellyfin-plugin-lastfm && dotnet clean
-	rm -rf /opt/jellyfin/config/plugins/LastFM
+	rm -rf /opt/jellyfin/data/plugins/LastFM
 
 restore:
 	cd /workspaces/jellyfin-plugin-lastfm && dotnet restore
 
 build:
-	cd /workspaces/jellyfin-plugin-lastfm && dotnet build --output /opt/jellyfin/config/plugins/LastFM
+	mkdir /opt/jellyfin/data/plugins/LastFM
+	cd /workspaces/jellyfin-plugin-lastfm && dotnet build --property:OutputPath=/opt/jellyfin/data/plugins/LastFM
 
 up:
 	/usr/local/share/jellyfin-init.sh &
