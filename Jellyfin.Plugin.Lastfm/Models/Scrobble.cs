@@ -10,10 +10,14 @@
 
     public class ScrobbleAttributes
     {
+        // https://www.last.fm/api/show/track.scrobble
+        // accepted : Number of accepted scrobbles
         [JsonPropertyName("accepted")]
-        public bool Accepted { get; set; }
+        public int Accepted { get; set; }
 
+        // https://www.last.fm/api/show/track.scrobble
+        // ignored : Number of ignored scrobbles (see ignoredMessage for details)
         [JsonPropertyName("ignored")]
-        public bool Ignored { get; set; }
+        public int Ignored { get; set; }
     }
 }
