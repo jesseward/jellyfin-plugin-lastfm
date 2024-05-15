@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Jellyfin.Plugin.Lastfm
 {
     /// <summary>
-    /// Register LastFM Scrobbler services
+    /// Register LastFM Scrobbler services.
     /// </summary>
     public class PluginServiceRegistrator : IPluginServiceRegistrator
     {
