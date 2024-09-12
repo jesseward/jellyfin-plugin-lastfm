@@ -8,11 +8,12 @@
     {
         // API docs for scrobbling located at https://www.last.fm/api/show/track.scrobble
         // Track, Artist, and Timestamp are required
-        // Album and MusicBrainzid are optional.
+        // Album, ArtistAlbum, and MusicBrainzid are optional.
         public string Track { get; set; }
         public string Artist { get; set; }
         public int Timestamp { get; set; }
         public string Album { get; set; }
+        public string AlbumArtist { get; set; }
         public string MbId { get; set; }
 
         public override Dictionary<string, string> ToDictionary()
@@ -30,6 +31,10 @@
             if (!string.IsNullOrWhiteSpace(MbId))
             {
                 scrobbleRequest.Add("mbid", MbId);
+            }
+            if (!string.IsNullOrWhiteSpace(AlbumArtist))
+            {
+                scrobbleRequest.Add("albumArtist", AlbumArtist);
             }
 
             return scrobbleRequest;

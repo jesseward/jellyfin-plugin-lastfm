@@ -9,6 +9,7 @@
         public string Track { get; set; }
         public string Album { get; set; }
         public string Artist { get; set; }
+        public string AlbumArtist { get; set; }
         public int Duration { get; set; }
         public string MbId { get; set; }
 
@@ -28,6 +29,10 @@
             if (!string.IsNullOrWhiteSpace(MbId))
             {
                 nowPlaying.Add("mbid", MbId);
+            }
+            if (!string.IsNullOrWhiteSpace(AlbumArtist))
+            {
+                nowPlaying.Add("albumArtist", AlbumArtist);
             }
 
             return nowPlaying;
