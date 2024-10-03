@@ -67,6 +67,11 @@
             {
                 request.MbId = item.ProviderIds["MusicBrainzTrack"];
             }
+            var albumArtist = item.AlbumArtists.First();
+            if (!string.IsNullOrWhiteSpace(albumArtist) && albumArtist != request.Artist)
+            {
+                request.AlbumArtist = albumArtist;
+            }
 
             try
             {
@@ -82,7 +87,7 @@
             }
             catch (Exception ex)
             {
-                _logger.LogError("Failed to Scrobble track: track: ex={0}, name={1}, track={2}, artist={3}, album={4}, mbid={5}", ex, item.Name, request.Track, request.Artist, request.Album, request.MbId);
+                _logger.LogError("Failed to Scrobble track: track: ex={0}, name={1}, track={2}, artist={3}, album={4}, albumArtist={5}, mbid={6}", ex, item.Name, request.Track, request.Artist, request.Album, request.AlbumArtist, request.MbId);
             }
         }
 
@@ -108,6 +113,11 @@
             {
                 request.MbId = item.ProviderIds["MusicBrainzTrack"];
             }
+            var albumArtist = item.AlbumArtists.First();
+            if (!string.IsNullOrWhiteSpace(albumArtist) && albumArtist != request.Artist)
+            {
+                request.AlbumArtist = albumArtist;
+            }
 
             // Add duration
             if (item.RunTimeTicks != null)
@@ -126,7 +136,7 @@
             }
             catch (Exception ex)
             {
-                _logger.LogError("Failed to send now playing for track: ex={0}, name={1}, track={2}, artist={3}, album={4}, mbid={5}", ex, item.Name, request.Track, request.Artist, request.Album, request.MbId);
+                _logger.LogError("Failed to send now playing for track: ex={0}, name={1}, track={2}, artist={3}, album={4}, albumArtist={5}, mbid={6}", ex, item.Name, request.Track, request.Artist, request.Album, request.AlbumArtist, request.MbId);
             }
         }
 
