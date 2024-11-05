@@ -12,6 +12,7 @@
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Hosting;
     using System.Threading;
+    using Jellyfin.Plugin.Lastfm.Utils;
 
     /// <summary>
     /// Class ServerEntryPoint
@@ -31,6 +32,7 @@
 
         private LastfmApiClient _apiClient;
         private readonly ILogger<ServerEntryPoint> _logger;
+        private long _playbackTimestamp;
 
         /// <summary>
         /// Gets the instance.
@@ -156,7 +158,8 @@
                 _logger.LogInformation("track {0} is missing  artist ({1}) or track name ({2}) metadata. Not submitting", item.Path, item.Artists.FirstOrDefault(), item.Name);
                 return;
             }
-            await _apiClient.Scrobble(item, lastfmUser).ConfigureAwait(false);
+
+            await _apiClient.Scrobble(item, lastfmUser, _playbackTimestamp).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -200,6 +203,9 @@
                 _logger.LogInformation("track {0} is missing artist ({1}) or track name ({2}) metadata. Not submitting", item.Path, item.Artists.FirstOrDefault(), item.Name);
                 return;
             }
+
+            _playbackTimestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
             await _apiClient.NowPlaying(item, lastfmUser).ConfigureAwait(false);
         }
 
