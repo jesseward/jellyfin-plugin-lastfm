@@ -84,6 +84,12 @@
             if (Plugin.Syncing)
                 return;
 
+            if (!lastfmUser.Options.SyncFavourites)
+            {
+                _logger.LogDebug("{0} ({1}) does not want to sync liked songs", user.Username, lastfmUser.Username);
+                return;
+            }
+
             await _apiClient.LoveTrack(item, lastfmUser, e.UserData.IsFavorite).ConfigureAwait(false);
         }
 
