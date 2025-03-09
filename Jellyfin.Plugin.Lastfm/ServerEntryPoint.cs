@@ -86,7 +86,7 @@
 
             if (!lastfmUser.Options.SyncFavourites)
             {
-                _logger.LogDebug("{0} ({1}) does not want to sync liked songs", user.Username, lastfmUser.Username);
+                _logger.LogDebug("{0} does not want to sync liked songs", lastfmUser.Username);
                 return;
             }
 
