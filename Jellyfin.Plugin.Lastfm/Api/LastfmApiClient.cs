@@ -44,14 +44,14 @@
             return response;
         }
 
-        public async Task Scrobble(Audio item, LastfmUser user)
+        public async Task Scrobble(Audio item, LastfmUser user, long timestamp)
         {
             // API docs -> https://www.last.fm/api/show/track.scrobble
             var request = new ScrobbleRequest
             {
                 Track = item.Name,
                 Artist = item.Artists.First(),
-                Timestamp = Helpers.CurrentTimestamp(),
+                Timestamp = timestamp,
 
                 ApiKey = Strings.Keys.LastfmApiKey,
                 Method = Strings.Methods.Scrobble,

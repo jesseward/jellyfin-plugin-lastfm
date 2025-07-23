@@ -33,23 +33,6 @@
             data.Add("api_sig", CreateSignature(data));
         }
 
-        public static int ToTimestamp(DateTime date)
-        {
-            return Convert.ToInt32((date - new DateTime(1970, 1, 1)).TotalSeconds);
-        }
-
-        public static DateTime FromTimestamp(double timestamp)
-        {
-            var date = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-
-            return date.AddSeconds(timestamp).ToLocalTime();
-        }
-
-        public static int CurrentTimestamp()
-        {
-            return ToTimestamp(DateTime.UtcNow);
-        }
-
         public static string DictionaryToQueryString(Dictionary<string, string> data)
         {
             return String.Join("&", data.Where(k => !String.IsNullOrWhiteSpace(k.Value)).Select(kvp => String.Format("{0}={1}", Uri.EscapeDataString(kvp.Key), Uri.EscapeDataString(kvp.Value))));
