@@ -33,6 +33,12 @@
                             <span>Sync favourites for this user?</span>
                         </label>
                     </div>
+                    <div class="checkboxContainer">
+                        <label>
+                            <input is="emby-checkbox" type="checkbox" id="optionAltMode" name="optionAltMode" />
+                            <span>Use alternative mode and scrobble on UserDataSaved events instead of PlaybackStopped?</span>
+                        </label>
+                    </div>
                     <div>
                         <button is="emby-button" type="submit" class="raised button-submit block emby-button">
                             <span>Save</span>
@@ -56,7 +62,8 @@
                     MediaBrowserUserId: '',
                     Options: {
                         Scrobble: false,
-                        SyncFavourites: false
+                        SyncFavourites: false,
+                        AlternativeMode: false
                     }
                 },
 
@@ -116,6 +123,7 @@
                     this.$el.find('#password').val(data.SessionKey);
                     this.$el.find('#optionScrobble').prop('checked', data.Options.Scrobble);
                     this.$el.find('#optionFavourite').prop('checked', data.Options.SyncFavourites);
+                    this.$el.find('#optionAltMode').prop('checked', data.Options.AlternativeMode);
 
                     // Don't forget to call checkboxradio('refresh') otherwise the UI wont update
                 },
@@ -204,6 +212,7 @@
 
                     options.Scrobble = this.$el.find('#optionScrobble').prop('checked');
                     options.SyncFavourites = this.$el.find('#optionFavourite').prop('checked');
+                    options.AlternativeMode = this.$el.find('#optionAltMode').prop('checked');
                     return options;
                 },
 

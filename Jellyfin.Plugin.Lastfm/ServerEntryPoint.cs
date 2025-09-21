@@ -61,10 +61,6 @@
             if (e.Item is not Audio)
                 return;
 
-            // We also only care about User rating changes
-            if (!e.SaveReason.Equals(UserDataSaveReason.UpdateUserRating))
-                return;
-
             var lastfmUser = Utils.UserHelpers.GetUser(e.UserId);
             if (lastfmUser == null)
             {
@@ -84,13 +80,35 @@
             if (Plugin.Syncing)
                 return;
 
-            if (!lastfmUser.Options.SyncFavourites)
+            if (e.SaveReason.Equals(UserDataSaveReason.UpdateUserRating))
             {
-                _logger.LogDebug("{0} does not want to sync liked songs", lastfmUser.Username);
-                return;
+                if (!lastfmUser.Options.SyncFavourites)
+                {
+                    _logger.LogDebug("{0} does not want to sync liked songs", lastfmUser.Username);
+                    return;
+                }
+                await _apiClient.LoveTrack(item, lastfmUser, e.UserData.IsFavorite).ConfigureAwait(false);
             }
 
-            await _apiClient.LoveTrack(item, lastfmUser, e.UserData.IsFavorite).ConfigureAwait(false);
+            if (e.SaveReason.Equals(UserDataSaveReason.PlaybackFinished))
+            {
+                if (!lastfmUser.Options.Scrobble)
+                {
+                    _logger.LogDebug("{0} does not want to scrobble", lastfmUser.Username);
+                    return;
+                }
+                if (!lastfmUser.Options.AlternativeMode)
+                {
+                    _logger.LogDebug("{0} does not use AlternativeMode", lastfmUser.Username);
+                    return;
+                }
+                if (string.IsNullOrWhiteSpace(item.Artists.FirstOrDefault()) || string.IsNullOrWhiteSpace(item.Name))
+                {
+                    _logger.LogInformation("track {0} is missing  artist ({1}) or track name ({2}) metadata. Not submitting", item.Path, item.Artists.FirstOrDefault(), item.Name);
+                    return;
+                }
+                await _apiClient.Scrobble(item, lastfmUser).ConfigureAwait(false);
+            }
         }
 
 
@@ -148,6 +166,11 @@
             if (!lastfmUser.Options.Scrobble)
             {
                 _logger.LogDebug("{0} ({1}) does not want to scrobble", user.Username, lastfmUser.Username);
+                return;
+            }
+            if (lastfmUser.Options.AlternativeMode)
+            {
+                _logger.LogDebug("{0} uses AlternativeMode", lastfmUser.Username);
                 return;
             }
 

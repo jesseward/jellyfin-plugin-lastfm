@@ -22,6 +22,8 @@ This error is returned from the last.fm API. If you're certain you have correctl
 
 This appears to be due to the method in which these clients play media files. This plugin relies the invocation of the `PlaybackStartEvent` and `PlaybackStopEvent` events. Some details and references to upstream issues is located at https://github.com/jesseward/jellyfin-plugin-lastfm/issues/27#issuecomment-744031810
 
+As an workaround, you can enable "Alternative Mode" in settings, which will scrobble on `UserDataSaved` events instead. See the [documentation of `jellyfin-plugin-listenbrainz`](https://github.com/lyarenei/jellyfin-plugin-listenbrainz/blob/main/doc/configuration.md#use-alternative-event-for-recognizing-listens) for the differences of the events.
+
 ### (very) Poor matching of artist/album/track names in the `LovedTracks` flow.
 
 Syncing of Loved tracks between LastFM and this plugin is subpar. This is due to the `IsLike` method that is used to compare track metadata. See https://github.com/jesseward/jellyfin-plugin-lastfm/issues/24
