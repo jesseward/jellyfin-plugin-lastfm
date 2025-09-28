@@ -39,7 +39,7 @@ jobs:
       run: curl -o manifest.json "https://jellyfin-repo.jesseward.com/manifest.json"
 
     - name: Update manifest with new version.
-      run: CK=$(python manifest-tools/md5/md5.py -f "lastfm_${GIT_TAG_NAME}.zip") && python manifest-tools/manifest-generator/manifest.py -app LastFM -f manifest.json version -ver "${GIT_TAG_NAME}" -cl "Jellyfin LastFM build v${GIT_TAG_NAME}" -abi "10.9.0.0" -url "https://github.com/jesseward/jellyfin-plugin-lastfm/releases/download/${GIT_TAG_NAME}/lastfm_${GIT_TAG_NAME}.zip" -ck "${CK}" && cat manifest.json
+      run: CK=$(python manifest-tools/md5/md5.py -f "lastfm_${GIT_TAG_NAME}.zip") && python manifest-tools/manifest-generator/manifest.py -app LastFM -f manifest.json version -ver "${GIT_TAG_NAME}" -cl "Jellyfin LastFM build v${GIT_TAG_NAME}" -abi "10.10.0.0" -url "https://github.com/jesseward/jellyfin-plugin-lastfm/releases/download/${GIT_TAG_NAME}/lastfm_${GIT_TAG_NAME}.zip" -ck "${CK}" && cat manifest.json
 
     - name: Create github release and upload binaries.
       uses: svenstaro/upload-release-action@v2
