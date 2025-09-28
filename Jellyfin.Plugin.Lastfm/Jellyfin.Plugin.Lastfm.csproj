@@ -15,7 +15,7 @@
   <ItemGroup>
     <PackageReference Include="System.Memory" Version="4.5.4" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
-    <PackageReference Include="Jellyfin.Controller" Version="10.*-*" />
+    <PackageReference Include="Jellyfin.Controller" Version="10.10.*-*" />
   </ItemGroup>
 
 </Project>
