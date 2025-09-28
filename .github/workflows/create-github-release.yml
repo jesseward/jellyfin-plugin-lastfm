@@ -4,16 +4,32 @@ on:
   push:
     tags:
       - '*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'The git tag to create a release for'
+        required: true
+
 jobs:
   build:
     name: Publish binaries
     runs-on: ubuntu-latest
 
     steps:
-    - uses: little-core-labs/get-git-tag@v3.0.1
-      id: tagName
+    - name: Get tag name
+      id: get_tag
+      run: |
+        if [[ "${{ github.event_name }}" == "push" ]]; then
+          TAG=${GITHUB_REF#refs/tags/}
+        else
+          TAG=${{ github.event.inputs.tag }}
+        fi
+        echo "tag=$TAG" >> $GITHUB_OUTPUT
+        echo "GIT_TAG_NAME=$TAG" >> $GITHUB_ENV
 
     - uses: actions/checkout@v2
+      with:
+        ref: ${{ steps.get_tag.outputs.tag }}
 
     - name: Checkout manifest build scripts repo.
       uses: actions/checkout@v2
@@ -45,11 +61,11 @@ jobs:
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: "lastfm_${{ steps.tagName.outputs.tag }}.zip"
-        asset_name: "lastfm_${{ steps.tagName.outputs.tag }}.zip"
-        tag: ${{ github.ref }}
+        file: "lastfm_${{ steps.get_tag.outputs.tag }}.zip"
+        asset_name: "lastfm_${{ steps.get_tag.outputs.tag }}.zip"
+        tag: ${{ steps.get_tag.outputs.tag }}
         overwrite: true
-        body: "Jellyfin lastfm plugin release v${{ steps.tagName.outputs.tag }}"
+        body: "Jellyfin lastfm plugin release v${{ steps.get_tag.outputs.tag }}"
 
     - name: Upload manifest.json to remote Azure blob store.
       uses: azure/CLI@v1
