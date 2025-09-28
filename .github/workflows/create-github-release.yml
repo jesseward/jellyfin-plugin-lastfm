@@ -33,7 +33,7 @@ jobs:
 
     - uses: actions/setup-python@v2
       with:
-        python-version: '3.7'
+        python-version: '3.13'
 
     - name: Fetch existing manifest from repo.
       run: curl -o manifest.json "https://jellyfin-repo.jesseward.com/manifest.json"
