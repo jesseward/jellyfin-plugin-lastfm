@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <AssemblyVersion>9.0.0.0</AssemblyVersion>
-    <FileVersion>9.0.0.0</FileVersion>
-    <Version>9.0.0.0</Version>
+    <TargetFramework>net9.0</TargetFramework>
+    <AssemblyVersion>10.0.0.0</AssemblyVersion>
+    <FileVersion>10.0.0.0</FileVersion>
+    <Version>10.0.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,8 +14,8 @@
 
   <ItemGroup>
     <PackageReference Include="System.Memory" Version="4.5.4" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
-    <PackageReference Include="Jellyfin.Controller" Version="10.10.*-*" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.4" />
+    <PackageReference Include="Jellyfin.Controller" Version="10.*-*" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,7 @@
 ﻿namespace Jellyfin.Plugin.Lastfm.ScheduledTasks
 {
     using Api;
-    using Jellyfin.Data.Entities;
+    using Jellyfin.Database.Implementations.Entities;
     using Jellyfin.Data.Enums;
     using MediaBrowser.Model.Tasks;
     using MediaBrowser.Controller.Entities;
