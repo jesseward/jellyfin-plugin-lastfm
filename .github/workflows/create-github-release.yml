@@ -39,13 +39,13 @@ jobs:
 
     - uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: '9.0.x'
 
     - name: Build release via dotnet build...
       run: dotnet build Jellyfin.Plugin.Lastfm
 
     - name: Create ZIP archive of plugin release.
-      run: zip "lastfm_${GIT_TAG_NAME}.zip" /home/runner/work/jellyfin-plugin-lastfm/jellyfin-plugin-lastfm/Jellyfin.Plugin.Lastfm/bin/Debug/net8.0/Jellyfin.Plugin.Lastfm.dll
+      run: zip "lastfm_${GIT_TAG_NAME}.zip" /home/runner/work/jellyfin-plugin-lastfm/jellyfin-plugin-lastfm/Jellyfin.Plugin.Lastfm/bin/Debug/net9.0/Jellyfin.Plugin.Lastfm.dll
 
     - uses: actions/setup-python@v2
       with:
@@ -55,7 +55,7 @@ jobs:
       run: curl -o manifest.json "https://jellyfin-repo.jesseward.com/manifest.json"
 
     - name: Update manifest with new version.
-      run: CK=$(python manifest-tools/md5/md5.py -f "lastfm_${GIT_TAG_NAME}.zip") && python manifest-tools/manifest-generator/manifest.py -app LastFM -f manifest.json version -ver "${GIT_TAG_NAME}" -cl "Jellyfin LastFM build v${GIT_TAG_NAME}" -abi "10.10.0.0" -url "https://github.com/jesseward/jellyfin-plugin-lastfm/releases/download/${GIT_TAG_NAME}/lastfm_${GIT_TAG_NAME}.zip" -ck "${CK}" && cat manifest.json
+      run: CK=$(python manifest-tools/md5/md5.py -f "lastfm_${GIT_TAG_NAME}.zip") && python manifest-tools/manifest-generator/manifest.py -app LastFM -f manifest.json version -ver "${GIT_TAG_NAME}" -cl "Jellyfin LastFM build v${GIT_TAG_NAME}" -abi "10.11.0.0" -url "https://github.com/jesseward/jellyfin-plugin-lastfm/releases/download/${GIT_TAG_NAME}/lastfm_${GIT_TAG_NAME}.zip" -ck "${CK}" && cat manifest.json
 
     - name: Create github release and upload binaries.
       uses: svenstaro/upload-release-action@v2

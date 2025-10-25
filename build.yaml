@@ -1,9 +1,9 @@
 ---
 name: "LastFM"
 guid: "5e7fe7f0-b048-429e-a431-b1a7e69c930d"
-version: "9.0.0.0"
-targetAbi: "10.10.0.0"
-framework: "net8.0"
+version: "10.0.0.0"
+targetAbi: "10.11.0.0"
+framework: "net9.0"
 overview: "A plugin that scrobbles your Jellyfin music to LastFM."
 description: >
   Scrobble LastFM plays with Jellyfin.
@@ -12,4 +12,4 @@ owner: "jesseward"
 artifacts:
   - "Jellyfin.Plugin.Lastfm.dll"
 changelog: >
-  Enables Alternative mode scrobbles
+  Support Jellyfin 10.11

@@ -30,16 +30,6 @@ Syncing of Loved tracks between LastFM and this plugin is subpar. This is due to
 
 ## 🚧 Developing
 
-### Developer: Build using Codespaces
-
-GitHub Codespaces is the quickest solution to get started with development. Once your codespace is up and running, issue the following to build and start-up Jellyfin.
-
-```sh
-cd /workspaces/jellyfin-plugin-lastfm/.devcontainer && make
-```
-
-Port `8096` is exposed via the Codespace to allow a remote connection to your Jellyfin instance.
-
 ### Developer: Local Builds
 
 Install the .NET SDK on Linux or macOS, see the download page at https://dotnet.microsoft.com/download . Native package manager instructions can be found for Debian, RHEL, Ubuntu, Fedora, SLES, and CentOS.
@@ -55,6 +45,20 @@ dotnet build
 If the build is successful, the tool will report the path to your Plugin dll (`Jellyfin.Plugin.Lastfm/bin/Debug/*/Jellyfin.Plugin.Lastfm.dll`)
 
 The plugin should then be copied into your Jellyfin `${CONFIG_DIR}/plugins/LastFM` directory.
+
+### Developer: Docker
+
+```sh
+docker build -t jellyfin-lastfm-plugin .
+```
+
+```sh
+docker run --rm -v "$(pwd)/build/config/plugins/LastFM:/out" jellyfin-lastfm-plugin cp /app/publish/Jellyfin.Plugin.Lastfm.dll /out/
+```
+
+```sh
+docker run --rm -d   --name jellyfin-lastfm-dev   -p 8096:8096   -v "$(pwd)/build/config:/config"   -v "$(pwd)/build/cache:/cache"   -v "$(pwd)/build/media:/media" jellyfin/jellyfin:10.11
+```
 
 ### Running Jellyfin from Docker
 
