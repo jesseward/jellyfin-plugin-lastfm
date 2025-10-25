@@ -114,3 +114,6 @@ MediaBrowser.Plugins.Lastfm.userprefs
 config/
 .DS_Store
 localconfig.sh
+
+
+build/
