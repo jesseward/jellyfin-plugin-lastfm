@@ -1,0 +1,22 @@
+{
+	"name": "Jellyfin Plugin Last.fm",
+	"dockerFile": "../Dockerfile",
+	"forwardPorts": [
+		8096,
+		8920
+	],
+	"mounts": [
+		"source=jellyfin-config,target=/mnt/jellyfin/config,type=volume",
+		"source=jellyfin-data,target=/mnt/jellyfin/data,type=volume",
+		"source=${localWorkspaceFolder}/tests,target=/mnt/jellyfin/media,type=bind,consistency=cached"
+	],
+	"postCreateCommand": "sudo chown -R vscode:vscode . /mnt/jellyfin && dotnet restore",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-dotnettools.csdevkit"
+			]
+		}
+	},
+	"remoteUser": "vscode"
+}
