@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
+using Jellyfin.Plugin.Lastfm.Resources;
 
 namespace Jellyfin.Plugin.Lastfm.Providers
 {
@@ -108,7 +109,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
         private async Task<LastfmGetAlbumResult> GetAlbumResult(string artist, string album, CancellationToken cancellationToken)
         {
             // Get albu info using artist and album name
-            var url = LastfmArtistProvider.RootUrl + string.Format("method=album.getInfo&artist={0}&album={1}&api_key={2}&format=json", UrlEncode(artist), UrlEncode(album), LastfmArtistProvider.ApiKey);
+            var url = LastfmArtistProvider.RootUrl + string.Format("method=album.getInfo&artist={0}&album={1}&api_key={2}&format=json", UrlEncode(artist), UrlEncode(album), Strings.Keys.LastfmApiKey);
 
             using (var response = await _httpClientFactory.CreateClient().GetAsync(url, cancellationToken).ConfigureAwait(false))
             {
@@ -130,7 +131,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
         private async Task<LastfmGetAlbumResult> GetAlbumResult(string musicbraizId, CancellationToken cancellationToken)
         {
             // Get albu info using artist and album name
-            var url = LastfmArtistProvider.RootUrl + string.Format("method=album.getInfo&mbid={0}&api_key={1}&format=json", UrlEncode(musicbraizId), LastfmArtistProvider.ApiKey);
+            var url = LastfmArtistProvider.RootUrl + string.Format("method=album.getInfo&mbid={0}&api_key={1}&format=json", UrlEncode(musicbraizId), Strings.Keys.LastfmApiKey);
 
             using (var response = await _httpClientFactory.CreateClient().GetAsync(url, cancellationToken).ConfigureAwait(false))
             {
@@ -266,6 +267,11 @@ namespace Jellyfin.Plugin.Lastfm.Providers
         public string size { get; set; }
     }
 
+    public class LastfmSimilarArtists
+    {
+        public List<LastfmArtist> artist { get; set; }
+    }
+
     public class LastfmArtist : IHasLastFmImages
     {
         public string name { get; set; }
@@ -274,7 +280,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
         public string streamable { get; set; }
         public string ontour { get; set; }
         public LastfmStats stats { get; set; }
-        public List<LastfmArtist> similar { get; set; }
+        public LastfmSimilarArtists similar { get; set; }
         public LastfmTags tags { get; set; }
         public LastFmBio bio { get; set; }
         public List<LastFmImage> image { get; set; }
@@ -288,8 +294,8 @@ namespace Jellyfin.Plugin.Lastfm.Providers
         public string id { get; set; }
         public string mbid { get; set; }
         public string releasedate { get; set; }
-        public int listeners { get; set; }
-        public int playcount { get; set; }
+        public string listeners { get; set; }
+        public string playcount { get; set; }
         public LastfmTags toptags { get; set; }
         public LastFmBio wiki { get; set; }
         public List<LastFmImage> image { get; set; }

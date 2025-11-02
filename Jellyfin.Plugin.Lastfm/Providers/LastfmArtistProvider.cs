@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Linq;
 
 using Microsoft.Extensions.Logging;
+using Jellyfin.Plugin.Lastfm.Resources;
 
 namespace Jellyfin.Plugin.Lastfm.Providers
 {
@@ -23,7 +24,6 @@ namespace Jellyfin.Plugin.Lastfm.Providers
         private readonly IHttpClientFactory _httpClientFactory;
 
         internal const string RootUrl = @"http://ws.audioscrobbler.com/2.0/?";
-        internal static string ApiKey = "7b76553c3eb1d341d642755aecc40a33";
 
         private readonly IServerConfigurationManager _config;
         private readonly ILoggerFactory _loggerFactory;
@@ -64,7 +64,7 @@ namespace Jellyfin.Plugin.Lastfm.Providers
         protected async Task FetchLastfmData(MusicArtist item, string musicBrainzId, CancellationToken cancellationToken)
         {
             // Get artist info with provided id
-            var url = RootUrl + String.Format("method=artist.getInfo&mbid={0}&api_key={1}&format=json", UrlEncode(musicBrainzId), ApiKey);
+            var url = RootUrl + String.Format("method=artist.getInfo&mbid={0}&api_key={1}&format=json", UrlEncode(musicBrainzId), Strings.Keys.LastfmApiKey);
 
             LastfmGetArtistResult result;
 
