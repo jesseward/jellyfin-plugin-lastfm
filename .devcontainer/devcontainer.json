@@ -1,6 +1,6 @@
 {
 	"name": "Jellyfin Plugin Last.fm",
-	"dockerFile": "../Dockerfile",
+	"dockerFile": "Dockerfile",
 	"forwardPorts": [
 		8096,
 		8920

@@ -20,9 +20,3 @@ RUN groupadd --gid $USER_GID $USERNAME \
 
 # Switch to the non-root user
 USER $USERNAME
-
-WORKDIR /src
-
-COPY --chown=$USERNAME:$USER_GID *.sln .
-COPY --chown=$USERNAME:$USER_GID Jellyfin.Plugin.Lastfm/*.csproj ./Jellyfin.Plugin.Lastfm/
-COPY . .
