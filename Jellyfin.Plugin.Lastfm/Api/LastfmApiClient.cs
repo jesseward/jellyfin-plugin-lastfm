@@ -6,6 +6,7 @@
     using Models.Responses;
     using Resources;
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Net.Http;
     using System.Threading;
@@ -17,6 +18,10 @@
     {
         private readonly ILogger _logger;
 
+        // if the last scrobble for the user is of the same song and happened within 15 seconds, do not scrobble.
+        private const long minimumTimeBetweenDuplicateScrobblesInSeconds = 15;
+        private readonly Dictionary<string, (string TrackId, long Timestamp)> _lastScrobble = new();
+        private readonly object _scrobbleLock = new();
 
         public LastfmApiClient(IHttpClientFactory httpClientFactory, ILogger logger) : base(httpClientFactory, logger)
         {
@@ -46,6 +51,18 @@
 
         public async Task Scrobble(Audio item, LastfmUser user)
         {
+            var now = Helpers.CurrentTimestamp();
+            var trackId = item.Id.ToString();
+
+            // Prevents duplicate scrobbles if the same track is scrobbled within minimumTimeBetweenDuplicateScrobblesInSeconds.
+            // The method also updates the last scrobble preemptively if not a duplicate.
+            // It uses the _scrobbleLock to ensure thread safety.
+            bool isDuplicate = CheckAndUpdateLastScrobble(user.Username, trackId, now);
+            if (isDuplicate)
+            {
+                return;
+            }
+
             // API docs -> https://www.last.fm/api/show/track.scrobble
             var request = new ScrobbleRequest
             {
@@ -241,6 +258,29 @@
             };
 
             return await Get<GetTracksRequest, GetTracksResponse>(request, cancellationToken);
+        }
+
+        private bool CheckAndUpdateLastScrobble(string userId, string trackId, long now)
+        {
+            lock (_scrobbleLock)
+            {
+                if (_lastScrobble.TryGetValue(userId, out var last))
+                {
+                    if (last.TrackId == trackId)
+                    {
+                        var secondsSinceLast = now - last.Timestamp;
+                        if (secondsSinceLast < minimumTimeBetweenDuplicateScrobblesInSeconds)
+                        {
+                            _logger.LogInformation("Duplicate scrobble detected for user={0}, trackId={1} within {2} seconds. Skipping.", userId, trackId, secondsSinceLast);
+                            return true;
+                        }
+                    }
+                }
+
+                // Preemptively update the last scrobble timestamp to prevent race conditions
+                _lastScrobble[userId] = (trackId, now);
+                return false;
+            }
         }
     }
 }
