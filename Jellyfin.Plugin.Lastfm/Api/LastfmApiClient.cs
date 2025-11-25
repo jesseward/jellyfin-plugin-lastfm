@@ -51,10 +51,7 @@
 
         public async Task Scrobble(Audio item, LastfmUser user)
         {
-            // Prevents duplicate scrobbles if the same track is scrobbled within the TTL period.
-            // The method also updates the cache with the new scrobble if it's not a duplicate.
-            // Even though MemoryCache is thread-safe, we use the _scrobbleLock to ensure thread safety for the whole check-and-set operation.
-            if (IsDuplicateScrobble(user.Username, item.Id.ToString()))
+            if (CheckAndUpdateScrobbleCache(user.Username, item.Id.ToString()))
             {
                 return;
             }
@@ -258,9 +255,11 @@
 
         /// <summary>
         /// Checks for duplicate scrobble and updates cache if not duplicate.
+        /// Even though MemoryCache is thread-safe, we use the _scrobbleLock to ensure thread safety for the whole check-and-set operation.
+        /// The method also updates the cache with the new scrobble if it's not a duplicate.
         /// Returns true if duplicate, false otherwise.
         /// </summary>
-        private bool IsDuplicateScrobble(string username, string trackId)
+        private bool CheckAndUpdateScrobbleCache(string username, string trackId)
         {
             var cacheKey = $"{username}:{trackId}";
             lock (_scrobbleLock)
