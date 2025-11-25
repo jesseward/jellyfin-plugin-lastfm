@@ -7,6 +7,7 @@
     using Resources;
     using System;
     using System.Collections.Generic;
+    using Microsoft.Extensions.Caching.Memory;
     using System.Linq;
     using System.Net.Http;
     using System.Threading;
@@ -18,9 +19,8 @@
     {
         private readonly ILogger _logger;
 
-        // if the last scrobble for the user is of the same song and happened within 15 seconds, do not scrobble.
-        private const long minimumTimeBetweenDuplicateScrobblesInSeconds = 15;
-        private readonly Dictionary<string, (string TrackId, long Timestamp)> _lastScrobble = new();
+        private static readonly TimeSpan DuplicateScrobbleTTL = TimeSpan.FromSeconds(15);
+        private readonly MemoryCache _scrobbleCache = new(new MemoryCacheOptions());
         private readonly object _scrobbleLock = new();
 
         public LastfmApiClient(IHttpClientFactory httpClientFactory, ILogger logger) : base(httpClientFactory, logger)
@@ -51,14 +51,10 @@
 
         public async Task Scrobble(Audio item, LastfmUser user)
         {
-            var now = Helpers.CurrentTimestamp();
-            var trackId = item.Id.ToString();
-
-            // Prevents duplicate scrobbles if the same track is scrobbled within minimumTimeBetweenDuplicateScrobblesInSeconds.
-            // The method also updates the last scrobble preemptively if not a duplicate.
-            // It uses the _scrobbleLock to ensure thread safety.
-            bool isDuplicate = CheckAndUpdateLastScrobble(user.Username, trackId, now);
-            if (isDuplicate)
+            // Prevents duplicate scrobbles if the same track is scrobbled within the TTL period.
+            // The method also updates the cache with the new scrobble if it's not a duplicate.
+            // Even though MemoryCache is thread-safe, we use the _scrobbleLock to ensure thread safety for the whole check-and-set operation.
+            if (IsDuplicateScrobble(user.Username, item.Id.ToString()))
             {
                 return;
             }
@@ -260,25 +256,21 @@
             return await Get<GetTracksRequest, GetTracksResponse>(request, cancellationToken);
         }
 
-        private bool CheckAndUpdateLastScrobble(string userId, string trackId, long now)
+        /// <summary>
+        /// Checks for duplicate scrobble and updates cache if not duplicate.
+        /// Returns true if duplicate, false otherwise.
+        /// </summary>
+        private bool IsDuplicateScrobble(string username, string trackId)
         {
+            var cacheKey = $"{username}:{trackId}";
             lock (_scrobbleLock)
             {
-                if (_lastScrobble.TryGetValue(userId, out var last))
+                if (_scrobbleCache.TryGetValue(cacheKey, out _))
                 {
-                    if (last.TrackId == trackId)
-                    {
-                        var secondsSinceLast = now - last.Timestamp;
-                        if (secondsSinceLast < minimumTimeBetweenDuplicateScrobblesInSeconds)
-                        {
-                            _logger.LogInformation("Duplicate scrobble detected for user={0}, trackId={1} within {2} seconds. Skipping.", userId, trackId, secondsSinceLast);
-                            return true;
-                        }
-                    }
+                    _logger.LogInformation("Duplicate scrobble detected for user={0}, trackId={1} within {2} seconds. Skipping.", username, trackId, DuplicateScrobbleTTL.TotalSeconds);
+                    return true;
                 }
-
-                // Preemptively update the last scrobble timestamp to prevent race conditions
-                _lastScrobble[userId] = (trackId, now);
+                _scrobbleCache.Set(cacheKey, true, DuplicateScrobbleTTL);
                 return false;
             }
         }
