@@ -6,7 +6,6 @@
     using Models.Responses;
     using Resources;
     using System;
-    using System.Collections.Generic;
     using Microsoft.Extensions.Caching.Memory;
     using System.Linq;
     using System.Net.Http;
