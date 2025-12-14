@@ -6,6 +6,7 @@
     using Models.Responses;
     using Resources;
     using System;
+    using Microsoft.Extensions.Caching.Memory;
     using System.Linq;
     using System.Net.Http;
     using System.Threading;
@@ -17,6 +18,9 @@
     {
         private readonly ILogger _logger;
 
+        private static readonly TimeSpan DuplicateScrobbleTTL = TimeSpan.FromSeconds(15);
+        private readonly MemoryCache _scrobbleCache = new(new MemoryCacheOptions());
+        private readonly object _scrobbleLock = new();
 
         public LastfmApiClient(IHttpClientFactory httpClientFactory, ILogger logger) : base(httpClientFactory, logger)
         {
@@ -46,6 +50,11 @@
 
         public async Task Scrobble(Audio item, LastfmUser user)
         {
+            if (CheckAndUpdateScrobbleCache(user.Username, item.Id.ToString()))
+            {
+                return;
+            }
+
             // API docs -> https://www.last.fm/api/show/track.scrobble
             var request = new ScrobbleRequest
             {
@@ -241,6 +250,27 @@
             };
 
             return await Get<GetTracksRequest, GetTracksResponse>(request, cancellationToken);
+        }
+
+        /// <summary>
+        /// Checks for duplicate scrobble and updates cache if not duplicate.
+        /// Even though MemoryCache is thread-safe, we use the _scrobbleLock to ensure thread safety for the whole check-and-set operation.
+        /// The method also updates the cache with the new scrobble if it's not a duplicate.
+        /// Returns true if duplicate, false otherwise.
+        /// </summary>
+        private bool CheckAndUpdateScrobbleCache(string username, string trackId)
+        {
+            var cacheKey = $"{username}:{trackId}";
+            lock (_scrobbleLock)
+            {
+                if (_scrobbleCache.TryGetValue(cacheKey, out _))
+                {
+                    _logger.LogInformation("Duplicate scrobble detected for user={0}, trackId={1} within {2} seconds. Skipping.", username, trackId, DuplicateScrobbleTTL.TotalSeconds);
+                    return true;
+                }
+                _scrobbleCache.Set(cacheKey, true, DuplicateScrobbleTTL);
+                return false;
+            }
         }
     }
 }
