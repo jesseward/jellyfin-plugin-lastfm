@@ -16,15 +16,16 @@
 
     public class LastfmApiClient : BaseLastfmApiClient
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<LastfmApiClient> _logger;
 
         private static readonly TimeSpan DuplicateScrobbleTTL = TimeSpan.FromSeconds(15);
-        private readonly MemoryCache _scrobbleCache = new(new MemoryCacheOptions());
+        private readonly IMemoryCache _scrobbleCache;
         private readonly object _scrobbleLock = new();
 
-        public LastfmApiClient(IHttpClientFactory httpClientFactory, ILogger logger) : base(httpClientFactory, logger)
+        public LastfmApiClient(IHttpClientFactory httpClientFactory, ILogger<LastfmApiClient> logger, IMemoryCache memoryCache) : base(httpClientFactory, logger)
         {
             _logger = logger;
+            _scrobbleCache = memoryCache;
         }
 
 
@@ -260,7 +261,7 @@
         /// </summary>
         private bool CheckAndUpdateScrobbleCache(string username, string trackId)
         {
-            var cacheKey = $"{username}:{trackId}";
+            var cacheKey = $"LastfmScrobble:{username}:{trackId}";
             lock (_scrobbleLock)
             {
                 if (_scrobbleCache.TryGetValue(cacheKey, out _))
