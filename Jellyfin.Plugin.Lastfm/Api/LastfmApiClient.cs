@@ -48,7 +48,7 @@
             return response;
         }
 
-        public async Task Scrobble(Audio item, LastfmUser user)
+        public async Task Scrobble(Audio item, LastfmUser user, long timestamp)
         {
             if (CheckAndUpdateScrobbleCache(user.Username, item.Id.ToString()))
             {
@@ -60,7 +60,7 @@
             {
                 Track = item.Name,
                 Artist = item.Artists.First(),
-                Timestamp = Helpers.CurrentTimestamp(),
+                Timestamp = timestamp,
 
                 ApiKey = Strings.Keys.LastfmApiKey,
                 Method = Strings.Methods.Scrobble,
