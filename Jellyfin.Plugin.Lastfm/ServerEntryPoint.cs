@@ -40,7 +40,7 @@
 
         public ServerEntryPoint(
             ISessionManager sessionManager,
-            IHttpClientFactory httpClientFactory,
+            LastfmApiClient apiClient,
             ILoggerFactory loggerFactory,
             IUserDataManager userDataManager)
         {
@@ -48,7 +48,7 @@
 
             _sessionManager = sessionManager;
             _userDataManager = userDataManager;
-            _apiClient = new LastfmApiClient(httpClientFactory, _logger);
+            _apiClient = apiClient;
             Instance = this;
         }
 

@@ -29,13 +29,13 @@
         private readonly ILogger<ImportLastfmData> _logger;
         private readonly LastfmApiClient _apiClient;
 
-        public ImportLastfmData(IHttpClientFactory httpClientFactory, IUserManager userManager, IUserDataManager userDataManager, ILibraryManager libraryManager, ILoggerFactory loggerFactory)
+        public ImportLastfmData(LastfmApiClient apiClient, IUserManager userManager, IUserDataManager userDataManager, ILibraryManager libraryManager, ILoggerFactory loggerFactory)
         {
             _userManager = userManager;
             _userDataManager = userDataManager;
             _libraryManager = libraryManager;
             _logger = loggerFactory.CreateLogger<ImportLastfmData>();
-            _apiClient = new LastfmApiClient(httpClientFactory, loggerFactory.CreateLogger<ImportLastfmData>());
+            _apiClient = apiClient;
         }
 
         public string Name => "Import Last.fm Loved Tracks";

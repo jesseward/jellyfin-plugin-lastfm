@@ -12,6 +12,7 @@ namespace Jellyfin.Plugin.Lastfm
         /// <inheritdoc />
         public void RegisterServices(IServiceCollection serviceCollection, IServerApplicationHost applicationHost)
         {
+            serviceCollection.AddSingleton<Api.LastfmApiClient>();
             serviceCollection.AddHostedService<ServerEntryPoint>();
         }
     }
