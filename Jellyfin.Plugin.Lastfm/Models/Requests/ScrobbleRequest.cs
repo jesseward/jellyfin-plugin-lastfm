@@ -11,7 +11,7 @@
         // Album, ArtistAlbum, and MusicBrainzid are optional.
         public string Track { get; set; }
         public string Artist { get; set; }
-        public int Timestamp { get; set; }
+        public long Timestamp { get; set; }
         public string Album { get; set; }
         public string AlbumArtist { get; set; }
         public string MbId { get; set; }
